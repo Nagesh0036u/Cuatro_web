@@ -1,0 +1,36 @@
+# Render Blueprint for the Cuatro Tech Solutions website.
+# Free plan = demo only: the database and uploaded resumes are wiped on every restart/redeploy.
+# For real use, switch to a paid plan and uncomment the "disk" block so data survives restarts.
+services:
+  - type: web
+    name: cuatro-tech-solutions
+    runtime: node
+    plan: free            # change to "starter" when you enable the disk below
+    buildCommand: npm ci --omit=dev
+    startCommand: npm run setup && npm start
+    healthCheckPath: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: NODE_ENV
+        value: production
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: TRUST_PROXY
+        value: "true"
+      - key: SEED_DEMO_JOBS
+        value: "true"     # demonstration jobs; set to "false" for real use
+      - key: ADMIN_EMAIL
+        sync: false       # you type this in the Render dashboard
+      - key: ADMIN_PASSWORD
+        sync: false       # you type this in the Render dashboard (never put it in the repo)
+      - key: ADMIN_NAME
+        value: Cuatro Administrator
+    # --- Persistent storage (paid plans only). Uncomment, and also set plan: starter above. ---
+    # disk:
+    #   name: cuatro-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
+    # and add these two env vars:
+    #   DATABASE_PATH=/var/data/cuatro.sqlite
+    #   RESUME_DIR=/var/data/resumes

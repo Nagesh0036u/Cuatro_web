@@ -23,7 +23,7 @@ const config = {
   ROOT,
   isProd,
   port: parseInt(env.PORT || '3000', 10),
-  siteUrl: (env.SITE_URL || `http://localhost:${env.PORT || 3000}`).replace(/\/$/, ''),
+  siteUrl: (env.SITE_URL || env.RENDER_EXTERNAL_URL || `http://localhost:${env.PORT || 3000}`).replace(/\/$/, ''),
   dbPath: resolveDir(env.DATABASE_PATH, 'data/cuatro.sqlite'),
   // Resumes live OUTSIDE the static web root and are only served through authorised routes.
   resumeDir: resolveDir(env.RESUME_DIR, 'storage/resumes'),
