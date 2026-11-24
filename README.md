@@ -138,3 +138,16 @@ Generated pages are the files you deploy; edit the generator and re-run `npm run
 
 The page banners in `assets/images/backgrounds/banners/` are free-to-use photos from Pexels (https://www.pexels.com/license/), converted to greyscale and darkened to match the template. Pexels IDs: 3153198, 3183150, 3182812, 325229, 267350, 196644, 577585, 1595385, 3861958, 1181244, 3184292, 1181263, 270408. Replace any of them by overwriting the file with a 1920x600 image of the same name.
 
+
+## Resume Builder (Student Portal)
+
+Students open **Student Portal > Resume Builder** (`/student-portal/resume-builder`).
+
+* **10 templates:** Classic Chronological, Skills Focus (Functional), Skills + Experience (Combination/Hybrid), Mini One-Pager, Targeted Application, Modern Sidebar, Executive Serif, Fresher / Student, Creative Bold and ATS Minimal.
+* **Editor** (`/student-portal/resume-editor?id=`): personal details, summary, experience, education, projects, grouped skills, certifications, achievements, languages and a target job. Entries can be added, removed and reordered. The preview updates as you type, changes autosave, and the template, font and accent colour can be switched at any time without losing content.
+* **Download PDF:** opens the browser print dialog with only the resume on an A4 page. Choose **Save as PDF** and turn off "Headers and footers". The PDF keeps real, selectable text.
+* **Use for job matching:** saves a plain-text copy of the resume as the student's current resume, so job recommendations and recruiters use it.
+* Each student can keep up to 10 resumes. All data is validated on the server, stored in the `resume_docs` table and only readable by its owner.
+* The editor shows how many A4 pages the resume will print on. Resumes with more content than one page continue on a second page.
+
+Run `node tests/e2e/resume-check.js` (server running on a fresh database) for a browser check of all 10 templates, including a PDF text check.

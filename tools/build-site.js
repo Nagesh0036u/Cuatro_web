@@ -19,7 +19,7 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 // ------------------------------------------------------------------------------------------------
 // shared chrome
 // ------------------------------------------------------------------------------------------------
-function head({ title, desc, p, noindex }) {
+function head({ title, desc, p, noindex, extraCss = [] }) {
   return `<!DOCTYPE html>
 <!-- language -->
 <html lang="en">
@@ -64,6 +64,7 @@ function head({ title, desc, p, noindex }) {
     <link rel="stylesheet" href="${p}assets/css/ostech.css">
     <!-- Cuatro additions (careers, portals, forms). Uses the template's design tokens. -->
     <link rel="stylesheet" href="${p}assets/css/cuatro.css">
+${extraCss.map((c) => `    <link rel="stylesheet" href="${p}assets/css/${c}">`).join("\n")}
 </head>
 `;
 }
@@ -329,8 +330,8 @@ ${crumbs.map((c) => (c.href ? `                    <li><a href="${c.href}">${c.l
 `;
 }
 
-function page({ file, title, desc, body, p = '', scripts = [], dataPage = '', noindex = false, cursor = true }) {
-  const html = `${head({ title, desc: desc || company.tagline, p, noindex })}
+function page({ file, title, desc, body, p = '', scripts = [], dataPage = '', noindex = false, cursor = true, extraCss = [] }) {
+  const html = `${head({ title, desc: desc || company.tagline, p, noindex, extraCss })}
 <body class="${cursor ? 'custom-cursor' : ''}"${dataPage ? ` data-page="${dataPage}"` : ''}>
 ${cursor ? `
     <!-- Custom Cursor -->
@@ -1285,6 +1286,7 @@ const studentNav = [
   ['dashboard', 'Dashboard', 'fa-th-large'],
   ['profile', 'My Profile', 'fa-user'],
   ['resume', 'My Resume', 'fa-file-alt'],
+  ['resume-builder', 'Resume Builder', 'fa-edit'],
   ['find-jobs', 'Find Jobs', 'fa-search'],
   ['find-jobs?tab=recommended', 'Recommended Jobs', 'fa-star'],
   ['applications', 'My Applications', 'fa-briefcase'],
@@ -1442,6 +1444,20 @@ ${field({ name: 'confirm_password', label: 'Confirm new password', type: 'passwo
     ['settings', 'Account Settings', 'settings', 'settings']
   ];
   sp.forEach(([file, title, current, dataPage]) => portalPage({ area: 'student', file, title, current, dataPage }));
+  // Resume Builder: gallery (normal portal layout) and editor (full width)
+  const rbCss = ['cuatro-resume.css'];
+  const rbBody = (title, inner) => `${pageHeader(title, [{ href: '/student-portal/dashboard', label: 'Student Portal' }, { label: title }], '/')}
+${inner}`;
+  page({
+    file: 'student-portal/resume-builder.html', title: 'Resume Builder', desc: 'Resume Builder - Cuatro Tech Solutions', p: '/', noindex: true, extraCss: rbCss,
+    scripts: ['cuatro-resume.js'], dataPage: 'student-resume-builder',
+    body: rbBody('Resume Builder', `        <section class="cuatro-portal"><div class="container"><div class="row gutter-y-30"><div class="col-lg-3">${sidebar('/student-portal', studentNav, 'resume-builder', 'Student Portal')}</div><div class="col-lg-9"><div id="app" class="cuatro-app" aria-live="polite"><p class="cuatro-muted">Loading...</p></div></div></div></div></section>`)
+  });
+  page({
+    file: 'student-portal/resume-editor.html', title: 'Resume Editor', desc: 'Resume Editor - Cuatro Tech Solutions', p: '/', noindex: true, extraCss: rbCss,
+    scripts: ['cuatro-resume.js'], dataPage: 'student-resume-editor',
+    body: rbBody('Resume Editor', `        <section class="rb-wrap"><div class="container-fluid"><div id="app" class="cuatro-app" aria-live="polite"><p class="cuatro-muted">Loading...</p></div></div></section>`)
+  });
 
   // ---- admin
   authPage({

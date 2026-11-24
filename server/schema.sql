@@ -192,3 +192,15 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   status TEXT NOT NULL DEFAULT 'New',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+-- Resume Builder: documents created by students in the portal (data is validated JSON, owned by one student)
+CREATE TABLE IF NOT EXISTS resume_docs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  student_id INTEGER NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  template TEXT NOT NULL,
+  data TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_resume_docs_student ON resume_docs(student_id);

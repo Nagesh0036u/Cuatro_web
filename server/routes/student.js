@@ -16,6 +16,7 @@ const { JOB_SELECT, jobView, isAccepting, notify, newApplicationCode, STATUS_INF
 
 const router = express.Router();
 router.use(sec.requireStudent);
+router.use('/resume-builder', require('./resumeBuilder'));
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: config.maxResumeBytes, files: 1, fields: 5 } });
 

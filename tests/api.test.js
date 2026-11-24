@@ -506,3 +506,110 @@ describe('page protection', () => {
     assert.equal((await c.get('/does-not-exist.html')).status, 404);
   });
 });
+
+describe('resume builder', () => {
+  let docId;
+  const BASE = '/api/student/resume-builder';
+
+  test('requires a student session', async () => {
+    const anon = await newClient();
+    assert.equal((await anon.get(`${BASE}/documents`)).status, 401);
+    assert.equal((await admin.get(`${BASE}/documents`)).status, 403);
+  });
+
+  test('creates a document pre-filled from the profile, rejects unknown templates', async () => {
+    assert.equal((await alice.post(`${BASE}/documents`, { template: 'nope' })).status, 422);
+    const r = await alice.post(`${BASE}/documents`, { template: 'modern', accent: '#336699', font: 'serif' });
+    assert.equal(r.status, 201);
+    docId = r.json.id;
+    const doc = (await alice.get(`${BASE}/documents/${docId}`)).json.document;
+    assert.equal(doc.template, 'modern');
+    assert.equal(doc.data.personal.full_name, 'Alice Rao');
+    assert.equal(doc.data.personal.email, 'alice@test.local');
+    assert.equal(doc.data.settings.accent, '#336699');
+    assert.equal(doc.data.settings.font, 'serif');
+    assert.ok(doc.data.skills[0].items.includes('Python'));
+  });
+
+  test('all 10 templates are accepted', async () => {
+    const { TEMPLATES } = require('../server/resumeBuilder');
+    assert.equal(TEMPLATES.length, 10);
+    for (const t of TEMPLATES) {
+      const r = await alice.put(`${BASE}/documents/${docId}`, { template: t, data: (await alice.get(`${BASE}/documents/${docId}`)).json.document.data });
+      assert.equal(r.status, 200, t);
+    }
+  });
+
+  test('saves edits and sanitises input', async () => {
+    const cur = (await alice.get(`${BASE}/documents/${docId}`)).json.document;
+    const data = cur.data;
+    data.summary = 'Data engineer. '.repeat(200);
+    data.settings = { accent: 'javascript:alert(1)', font: 'comic' };
+    data.experience = [{ title: 'Data Engineer', company: 'Acme', location: '', start: 'Jan 2024', end: '', current: true, bullets: '- Built pipelines\n* Wrote SQL' }];
+    data.skills = [{ name: 'Core', items: 'Python, SQL, Docker' }];
+    data.bogus = 'x';
+    const r = await alice.put(`${BASE}/documents/${docId}`, { title: 'Alice Data Resume', template: 'minimal', data });
+    assert.equal(r.status, 200);
+    const saved = (await alice.get(`${BASE}/documents/${docId}`)).json.document;
+    assert.equal(saved.title, 'Alice Data Resume');
+    assert.equal(saved.template, 'minimal');
+    assert.ok(saved.data.summary.length <= 1200);
+    assert.equal(saved.data.settings.accent, '#FFAA17');
+    assert.equal(saved.data.settings.font, 'sans');
+    assert.equal(saved.data.bogus, undefined);
+    assert.equal(saved.data.experience[0].current, true);
+    assert.equal((await alice.put(`${BASE}/documents/${docId}`, { template: 'bad', data })).status, 422);
+  });
+
+  test("Student B cannot read, change, copy or delete Student A's resume", async () => {
+    assert.equal((await bob.get(`${BASE}/documents/${docId}`)).status, 404);
+    assert.equal((await bob.put(`${BASE}/documents/${docId}`, { data: {} })).status, 404);
+    assert.equal((await bob.post(`${BASE}/documents/${docId}/duplicate`, {})).status, 404);
+    assert.equal((await bob.post(`${BASE}/documents/${docId}/use-for-matching`, {})).status, 404);
+    assert.equal((await bob.del(`${BASE}/documents/${docId}`)).status, 404);
+    assert.equal((await bob.get(`${BASE}/documents`)).json.documents.length, 0);
+  });
+
+  test('duplicate, list and delete', async () => {
+    const dup = await alice.post(`${BASE}/documents/${docId}/duplicate`, {});
+    assert.equal(dup.status, 201);
+    assert.equal((await alice.get(`${BASE}/documents`)).json.documents.length, 2);
+    assert.equal((await alice.del(`${BASE}/documents/${dup.json.id}`)).status, 200);
+    assert.equal((await alice.get(`${BASE}/documents`)).json.documents.length, 1);
+  });
+
+  test('a student can keep at most 10 resumes', async () => {
+    for (let i = 0; i < 12; i += 1) {
+      const r = await bob.post(`${BASE}/documents`, { template: 'chronological' });
+      if (i < 10) assert.equal(r.status, 201); else assert.equal(r.status, 409);
+    }
+  });
+
+  test('"use for job matching" makes the built resume the current resume and detects skills', async () => {
+    const r = await alice.post(`${BASE}/documents/${docId}/use-for-matching`, {});
+    assert.equal(r.status, 200, JSON.stringify(r.json));
+    assert.ok(r.json.skills_found.includes('Python') && r.json.skills_found.includes('Docker'));
+    const cur = (await alice.get('/api/student/resume')).json.resume;
+    assert.equal(cur.original_name, 'Alice Data Resume.txt');
+    assert.equal(ctx.db.get('SELECT COUNT(*) AS n FROM resumes WHERE student_id = (SELECT id FROM student_profiles WHERE user_id = (SELECT id FROM users WHERE email = ?)) AND is_current = 1', 'alice@test.local').n, 1);
+    const rec = (await alice.get('/api/student/recommendations')).json;
+    assert.equal(rec.sufficient, true);
+  });
+
+  test('an almost empty resume cannot be used for matching', async () => {
+    const c = await registerStudent('Blank Person', 'blank@test.local');
+    const d = (await c.post(`${BASE}/documents`, { template: 'mini' })).json.id;
+    const doc = (await c.get(`${BASE}/documents/${d}`)).json.document;
+    doc.data.personal = { full_name: '' }; doc.data.skills = []; doc.data.education = []; doc.data.experience = [];
+    await c.put(`${BASE}/documents/${d}`, { data: doc.data });
+    assert.equal((await c.post(`${BASE}/documents/${d}/use-for-matching`, {})).status, 422);
+  });
+
+  test('builder pages are protected', async () => {
+    const anon = await newClient();
+    assert.equal((await anon.get('/student-portal/resume-builder')).status, 302);
+    assert.equal((await anon.get('/student-portal/resume-editor?id=1')).status, 302);
+    assert.equal((await alice.get('/student-portal/resume-builder')).status, 200);
+    assert.equal((await alice.get('/student-portal/resume-editor?id=1')).status, 200);
+  });
+});

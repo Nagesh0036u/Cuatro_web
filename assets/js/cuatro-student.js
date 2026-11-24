@@ -134,7 +134,7 @@
   CT.on('student-resume', () => view(async (app) => {
     const render = async () => {
       const { resume, max_mb: maxMb } = await CT.api('GET', '/api/student/resume');
-      app.innerHTML = `${title('My Resume', 'Upload your resume so we can extract your skills and recommend suitable jobs.')}
+      app.innerHTML = `${title('My Resume', 'Upload your resume so we can extract your skills and recommend suitable jobs. Do not have one yet? <a href="/student-portal/resume-builder"><strong>Create it with Resume Builder</strong></a>.')}
         <div class="cuatro-box"><h3>Current resume</h3>
           ${resume ? `<dl class="cuatro-kv"><dt>File name</dt><dd>${e(resume.original_name)}</dd><dt>Uploaded</dt><dd>${CT.fmtDate(resume.uploaded_at, true)}</dd><dt>Size</dt><dd>${CT.fmtSize(resume.file_size)}</dd><dt>Status</dt><dd>${e(resume.status)}</dd>
             <dt>Skills detected</dt><dd>${CT.skillTags(resume.skills_found, 'cuatro-tag--ok')}</dd></dl>

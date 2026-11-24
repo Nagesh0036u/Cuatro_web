@@ -1,0 +1,180 @@
+/* Resume Builder: 10 resume designs (A4, 794 x 1123 px), editor layout and print rules. */
+
+/* ---------- the resume page itself ---------- */
+.rs { --rs-accent: #FFAA17; --rs-accent-dark: #8a5a00; --rs-on-accent: #1a1d24; --rs-tint: #fff3dc;
+  width: 794px; min-height: 1123px; background: #fff; color: #1f2430; font-size: 13px; line-height: 1.45; box-sizing: border-box; text-align: left; position: relative; }
+.rs *, .rs *::before, .rs *::after { box-sizing: border-box; }
+.rs-font-sans { font-family: "Barlow", Arial, sans-serif; }
+.rs-font-serif { font-family: Georgia, "Times New Roman", serif; }
+.rs-font-rounded { font-family: "Barlow", Arial, sans-serif; }
+.rs-font-rounded .rs-name, .rs-font-rounded .rs-h { font-family: "Syne", "Barlow", sans-serif; }
+.rs-name { font-size: 30px; font-weight: 800; line-height: 1.1; margin: 0; }
+.rs-headline { font-size: 14px; font-weight: 600; color: var(--rs-accent-dark); margin-top: 4px; }
+.rs-contact { display: flex; flex-wrap: wrap; gap: 3px 16px; font-size: 12px; margin-top: 8px; color: #3d4350; }
+.rs-sec { margin-top: 16px; }
+.rs-h { font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--rs-accent-dark); border-bottom: 2px solid var(--rs-accent); padding-bottom: 3px; margin-bottom: 9px; }
+.rs-item { margin-bottom: 10px; break-inside: avoid; page-break-inside: avoid; }
+.rs-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.rs-role { font-weight: 700; }
+.rs-org { font-weight: 600; color: #3d4350; }
+.rs-loc, .rs-sub { color: #5b6270; }
+.rs-date { font-size: 12px; color: #5b6270; white-space: nowrap; }
+.rs-list { margin: 4px 0 0; padding-left: 18px; }
+.rs-list li { margin-bottom: 2px; }
+.rs-p { margin: 0; white-space: pre-line; }
+.rs-inline { margin: 0 0 3px; }
+.rs-inline b { font-weight: 700; }
+.rs-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.rs-chip { background: var(--rs-tint); border: 1px solid var(--rs-accent); border-radius: 12px; padding: 1px 10px; font-size: 12px; }
+.rs-skillblock { margin-bottom: 8px; break-inside: avoid; }
+.rs-skillblock .rs-role { display: block; margin-bottom: 2px; }
+.rs-cols2 { columns: 2; column-gap: 24px; }
+.rs-cols2 li { break-inside: avoid; }
+.rs-empty { color: #9aa0ab; font-style: italic; }
+
+/* 1. Chronological: classic, centred header */
+.rs-chronological { padding: 44px 48px; }
+.rs-chronological .rs-head { text-align: center; }
+.rs-chronological .rs-contact { justify-content: center; }
+
+/* 2. Functional: skills first */
+.rs-functional { padding: 44px 48px; }
+.rs-functional .rs-head { border-left: 6px solid var(--rs-accent); padding-left: 16px; }
+.rs-functional .rs-h { border-bottom: 0; background: var(--rs-tint); padding: 5px 10px; border-left: 4px solid var(--rs-accent); }
+
+/* 3. Combination: header band, skills grid, then experience */
+.rs-combination { padding: 0 0 40px; }
+.rs-combination .rs-head { background: var(--rs-accent); color: var(--rs-on-accent); padding: 34px 48px; display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; }
+.rs-combination .rs-headline { color: var(--rs-on-accent); }
+.rs-combination .rs-contact { flex-direction: column; gap: 2px; margin: 0; text-align: right; color: var(--rs-on-accent); }
+.rs-combination .rs-body { padding: 4px 48px 0; }
+.rs-combination .rs-chip { background: #fff; }
+
+/* 4. Mini: one compact page */
+.rs-mini { padding: 30px 36px; font-size: 11.5px; line-height: 1.4; }
+.rs-mini .rs-name { font-size: 24px; }
+.rs-mini .rs-headline { font-size: 12.5px; }
+.rs-mini .rs-sec { margin-top: 11px; }
+.rs-mini .rs-h { font-size: 11.5px; margin-bottom: 6px; }
+.rs-mini .rs-item { margin-bottom: 6px; }
+
+/* 5. Targeted: aimed at one job */
+.rs-targeted { padding: 40px 48px; }
+.rs-targeted .rs-target { background: var(--rs-accent); color: var(--rs-on-accent); padding: 9px 14px; margin-top: 14px; font-weight: 700; font-size: 14px; }
+.rs-targeted .rs-keyq { border-left: 5px solid var(--rs-accent); background: var(--rs-tint); padding: 10px 14px; margin-top: 12px; }
+.rs-targeted .rs-keyq .rs-role { display: block; margin-bottom: 4px; }
+
+/* 6. Modern: coloured sidebar */
+.rs-modern { display: grid; grid-template-columns: 240px 1fr; padding: 0; }
+.rs-modern .rs-side { background: var(--rs-accent); color: var(--rs-on-accent); padding: 40px 22px; }
+.rs-modern .rs-main { padding: 40px 36px; }
+.rs-modern .rs-side .rs-h { color: var(--rs-on-accent); border-bottom-color: var(--rs-on-accent); font-size: 12px; }
+.rs-modern .rs-side .rs-sec:first-child { margin-top: 0; }
+.rs-modern .rs-side li, .rs-modern .rs-side div { word-break: break-word; }
+.rs-modern .rs-side .rs-list { padding-left: 16px; }
+.rs-modern .rs-side-line { margin: 0 0 5px; font-size: 12px; }
+
+/* 7. Executive: formal serif */
+.rs-executive { padding: 52px 56px; }
+.rs-executive .rs-head { text-align: center; border-bottom: 3px double #222; padding-bottom: 14px; }
+.rs-executive .rs-name { text-transform: uppercase; letter-spacing: .14em; font-size: 28px; font-weight: 700; }
+.rs-executive .rs-headline { font-style: italic; color: #333; font-weight: 400; }
+.rs-executive .rs-contact { justify-content: center; }
+.rs-executive .rs-h { color: #111; border-bottom: 1px solid #222; letter-spacing: .12em; font-size: 12.5px; }
+
+/* 8. Fresher: education and projects first */
+.rs-fresher { padding: 40px 48px; }
+.rs-fresher .rs-head { border-bottom: 4px solid var(--rs-accent); padding-bottom: 12px; }
+.rs-fresher .rs-h { border-bottom: 0; border-left: 5px solid var(--rs-accent); padding-left: 9px; background: var(--rs-tint); padding-top: 4px; }
+
+/* 9. Creative: bold header, two columns */
+.rs-creative { padding: 0 0 36px; }
+.rs-creative .rs-head { background: var(--rs-accent); color: var(--rs-on-accent); padding: 36px 48px 30px; }
+.rs-creative .rs-name { font-size: 38px; }
+.rs-creative .rs-headline, .rs-creative .rs-contact { color: var(--rs-on-accent); }
+.rs-creative .rs-grid { display: grid; grid-template-columns: 1.75fr 1fr; gap: 28px; padding: 6px 48px 0; }
+.rs-creative .rs-h { border-bottom-width: 3px; }
+
+/* 10. Minimal: plain, best for applicant tracking systems */
+.rs-minimal { padding: 44px 52px; color: #111; }
+.rs-minimal .rs-name { font-size: 26px; }
+.rs-minimal .rs-headline { color: #111; font-weight: 500; }
+.rs-minimal .rs-contact { color: #111; }
+.rs-minimal .rs-h { color: #111; border-bottom: 1px solid #111; font-size: 12px; letter-spacing: .1em; }
+.rs-minimal .rs-chip { background: none; border: 0; padding: 0; }
+.rs-minimal .rs-chip:not(:last-child)::after { content: ","; }
+
+/* ---------- gallery + manager ---------- */
+.rb-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 26px; }
+.rb-card { background: #fff; box-shadow: var(--cuatro-shadow); display: flex; flex-direction: column; transition: 400ms; }
+.rb-card:hover { transform: translateY(-5px); }
+.rb-thumb { position: relative; width: 100%; aspect-ratio: 210 / 297; overflow: hidden; background: #fff; border-bottom: 1px solid var(--ostech-border-color, #DBDBDB); pointer-events: none; }
+.rb-thumb .rs { position: absolute; top: 0; left: 0; transform-origin: top left; }
+.rb-card__body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.rb-card__type { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ostech-text-gray2, #6A6A6A); }
+.rb-card__name { font-size: 20px; font-weight: 700; margin: 0; }
+.rb-card__desc { color: var(--ostech-text, #686A6F); font-size: 14px; margin: 0 0 8px; flex: 1; }
+.rb-doclist { display: grid; gap: 12px; }
+.rb-doc { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; background: var(--ostech-gray, #F4F5F8); padding: 14px 18px; }
+.rb-doc__name { font-weight: 700; font-size: 17px; }
+.rb-doc__meta { color: var(--ostech-text, #686A6F); font-size: 13px; }
+
+/* ---------- editor ---------- */
+.rb-wrap { padding: 40px 0 80px; background: var(--ostech-white, #fff); }
+.rb-wrap .container-fluid { max-width: 1680px; }
+.rb-top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 18px; }
+.rb-top .cuatro-form input[type=text] { height: 48px; }
+.rb-title { flex: 1 1 260px; min-width: 200px; }
+.rb-top select { height: 48px; padding: 0 40px 0 14px; border: 0; background-color: var(--ostech-gray, #F4F5F8); font-weight: 600; font-size: 14px; max-width: 200px; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23222429' stroke-width='2'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; }
+.rb-top input[type=color] { width: 48px; height: 48px; border: 0; padding: 3px; background: var(--ostech-gray, #F4F5F8); cursor: pointer; }
+.rb-status { font-size: 13px; font-weight: 600; color: var(--ostech-text-gray2, #6A6A6A); min-width: 110px; }
+.rb-status.ok { color: var(--cuatro-success); }
+.rb-status.err { color: var(--cuatro-danger); }
+.rb-layout { display: grid; grid-template-columns: minmax(380px, 520px) minmax(0, 1fr); gap: 26px; align-items: start; }
+.rb-form { background: #fff; box-shadow: var(--cuatro-shadow); }
+.rb-sec { border-bottom: 1px solid var(--ostech-gray, #F4F5F8); }
+.rb-sec > summary { cursor: pointer; padding: 15px 20px; font-weight: 700; font-size: 16px; list-style: none; display: flex; align-items: center; justify-content: space-between; color: var(--ostech-text-dark, #222429); }
+.rb-sec > summary::-webkit-details-marker { display: none; }
+.rb-sec > summary::after { content: "+"; font-size: 22px; color: var(--ostech-base, #FFAA17); }
+.rb-sec[open] > summary::after { content: "\2212"; }
+.rb-sec__body { padding: 4px 20px 20px; }
+.rb-field { margin-bottom: 14px; }
+.rb-field label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 5px; color: var(--ostech-text-dark, #222429); }
+.rb-field input[type=text], .rb-field input[type=email], .rb-field input[type=tel], .rb-field textarea { width: 100%; border: 1px solid transparent; background: var(--ostech-gray, #F4F5F8); padding: 11px 14px; font-size: 14px; font-weight: 500; color: var(--ostech-text-dark, #222429); outline: none; font-family: var(--ostech-font, "Barlow", sans-serif); border-radius: 0; }
+.rb-field input:focus, .rb-field textarea:focus { border-color: var(--ostech-base, #FFAA17); }
+.rb-field textarea { min-height: 90px; resize: vertical; }
+.rb-field small { color: var(--ostech-text-gray, #999B9F); font-size: 12px; }
+.rb-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+.rb-item { border: 1px solid var(--ostech-border-color, #DBDBDB); padding: 14px; margin-bottom: 14px; }
+.rb-item__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 700; font-size: 14px; }
+.rb-item__tools { display: flex; gap: 4px; }
+.rb-icon { border: 0; background: var(--ostech-gray, #F4F5F8); width: 30px; height: 30px; cursor: pointer; font-size: 13px; color: var(--ostech-text-dark, #222429); }
+.rb-icon:hover:not(:disabled) { background: var(--ostech-base, #FFAA17); }
+.rb-icon:disabled { opacity: .35; cursor: default; }
+.rb-check { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; margin-bottom: 12px; }
+.rb-preview { position: sticky; top: 110px; }
+.rb-stage { background: #e4e7ee; padding: 18px; overflow: hidden; }
+.rb-scale { transform-origin: top left; box-shadow: 0 6px 28px rgba(0, 0, 0, .18); }
+.rb-pages { font-size: 13px; font-weight: 600; margin: 0 0 10px; }
+.rb-pages.warn { color: #a76100; }
+.rb-mobile-tabs { display: none; gap: 6px; margin-bottom: 14px; }
+.rb-mobile-tabs button { flex: 1; }
+@media (max-width: 1099px) {
+  .rb-layout { grid-template-columns: 1fr; }
+  .rb-preview { position: static; }
+  .rb-mobile-tabs { display: flex; }
+  .rb-layout[data-view="edit"] .rb-preview { display: none; }
+  .rb-layout[data-view="preview"] .rb-form { display: none; }
+}
+@media (max-width: 575px) { .rb-grid2 { grid-template-columns: 1fr; } .rb-stage { padding: 8px; } }
+
+/* ---------- print: only the resume, on A4 ---------- */
+#rs-print-root { display: none; }
+@media print {
+  @page { size: A4; margin: 0; }
+  html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+  body > *:not(#rs-print-root) { display: none !important; }
+  #rs-print-root { display: block !important; }
+  #rs-print-root .rs { width: 210mm; min-height: 296mm; transform: none !important; box-shadow: none !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
