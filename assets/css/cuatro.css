@@ -81,7 +81,7 @@
 .cf-hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .cuatro-auth { padding: 100px 0; }
 .cuatro-auth .login-page__inner { margin-top: 0; }
-.cuatro-auth__brand { margin-bottom: 24px; }
+.cuatro-auth__brand { margin-bottom: 24px; background: var(--ostech-secondary, #232429); padding: 18px 24px; display: inline-block; }
 .cuatro-auth__brand img { height: auto; max-width: 100%; }
 .cuatro-auth__links { margin-top: 24px; font-weight: 600; color: var(--ostech-text, #686A6F); }
 .cuatro-auth__links a { color: var(--ostech-text-dark, #222429); text-decoration: underline; }
@@ -245,3 +245,13 @@
 }
 .cuatro-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
 @media (max-width: 991px) { .cuatro-actions { justify-content: flex-start; } }
+
+h1, h2, h3, h4, h5, h6, .sec-title__title, .page-header__title, .main-slider-one__title { font-family: var(--ostech-heading-font); letter-spacing: -0.005em; }
+h1, h2, h3, h4 { font-weight: 800; }
+h5, h6 { font-weight: 700; }
+
+/* Headings follow the rounded, geometric letterforms of the Cuatro logo */
+:root { --ostech-heading-font: "Nunito", "Barlow", sans-serif; }
+.cuatro-auth__brand { background: var(--ostech-secondary, #232429); padding: 18px 24px; display: inline-block; }
+.cuatro-auth__brand img { display: block; }
+
