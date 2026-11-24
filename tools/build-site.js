@@ -438,6 +438,12 @@ ${items.map(([q, a], i) => `                            <div class="accrodion${i
 // ------------------------------------------------------------------------------------------------
 // public pages
 // ------------------------------------------------------------------------------------------------
+/** Two identical halves so the CSS loop (0 to -50%) is seamless. */
+function tapeItems(list) {
+  const half = [...list, ...list].map((x) => `                    <span class="cuatro-tape__item"><img src="assets/images/shapes/star.png" alt> ${esc(x)}</span>`).join('\n');
+  return half + '\n' + half;
+}
+
 function buildHome() {
   const p = '';
   const slides = [
@@ -777,17 +783,20 @@ ${[['icon-expertise-1', 5, 'Core <br> Services'], ['icon-verified-2', 19, 'Job <
         </section>
         <!-- Benefit section End -->
 
-        <!-- Sliding section Start -->
-        <div class="text-slider  wow fadeInUp" data-wow-delay="500ms">
-            <div class="text-slider__inner">
-                <div class="text-slider__carousel">
-                    <div class="text-slider__carousel__item">
-${[...services.map((s) => s.title), ...services.map((s) => s.title)].concat(['Careers at Cuatro', 'People, Data & Digital Innovation', 'Careers at Cuatro', 'People, Data & Digital Innovation']).map((t) => `                        <div class="text-slider__item"><img src="assets/images/shapes/star.png" alt> ${t.replace(/&/g, '&amp;')}</div>`).join('\n')}
-                    </div>
+        <!-- Taglines: two bands scrolling in opposite directions -->
+        <div class="cuatro-tape wow fadeInUp" data-wow-delay="300ms" aria-label="Cuatro services and tagline">
+            <div class="cuatro-tape__band cuatro-tape__band--a" aria-hidden="true">
+                <div class="cuatro-tape__track cuatro-tape__track--left">
+${tapeItems(services.map((s) => s.title))}
+                </div>
+            </div>
+            <div class="cuatro-tape__band cuatro-tape__band--b" aria-hidden="true">
+                <div class="cuatro-tape__track cuatro-tape__track--right">
+${tapeItems([company.tagline.replace(/\.$/, ''), 'Careers at Cuatro'])}
                 </div>
             </div>
         </div>
-        <!-- Sliding section End -->
+        <!-- Taglines end -->
 
 ${cta(p)}`;
   page({ file: 'index.html', title: 'Home', desc: `${company.name}. ${company.tagline}`, body });

@@ -255,3 +255,19 @@ h5, h6 { font-weight: 700; }
 .cuatro-auth__brand { background: var(--ostech-secondary, #232429); padding: 18px 24px; display: inline-block; }
 .cuatro-auth__brand img { display: block; }
 
+
+/* ---------- Home: two tagline bands, smaller, scrolling in opposite directions ---------- */
+.cuatro-tape { position: relative; padding: 80px 0; overflow: hidden; background: var(--ostech-white, #fff); z-index: 1; }
+.cuatro-tape__band { width: 110%; margin-left: -5%; overflow: hidden; white-space: nowrap; }
+.cuatro-tape__band--a { background: var(--ostech-base, #FFAA17); color: var(--ostech-text-dark, #222429); transform: rotate(-1.4deg); position: relative; z-index: 2; }
+.cuatro-tape__band--b { background: var(--ostech-secondary, #232429); color: var(--ostech-white, #fff); transform: rotate(1.4deg); margin-top: 14px; position: relative; z-index: 1; }
+.cuatro-tape__track { display: inline-flex; align-items: center; gap: 34px; width: max-content; padding: 10px 0; will-change: transform; }
+.cuatro-tape__track--left { animation: cuatroTapeLeft 45s linear infinite; }
+.cuatro-tape__track--right { animation: cuatroTapeRight 55s linear infinite; }
+.cuatro-tape:hover .cuatro-tape__track { animation-play-state: paused; }
+.cuatro-tape__item { display: inline-flex; align-items: center; font-family: var(--ostech-heading-font); font-size: 17px; font-weight: 800; letter-spacing: .01em; text-transform: capitalize; line-height: 1.6; }
+.cuatro-tape__item img { width: 20px !important; height: auto; margin-right: 12px; }
+.cuatro-tape__band--b .cuatro-tape__item img { filter: brightness(0) invert(1); }
+@keyframes cuatroTapeLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes cuatroTapeRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@media (max-width: 767px) { .cuatro-tape { padding: 50px 0; } .cuatro-tape__item { font-size: 15px; } }
