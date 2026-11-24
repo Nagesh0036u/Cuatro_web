@@ -1,0 +1,33 @@
+{
+  "name": "cuatro-tech-solutions-website",
+  "version": "1.0.0",
+  "description": "Cuatro Tech Solutions website with Careers, Student Portal and Admin Recruitment Portal",
+  "private": true,
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "setup": "node scripts/setup.js",
+    "migrate": "node scripts/migrate.js",
+    "create-admin": "node scripts/create-admin.js",
+    "seed-demo": "node scripts/seed-demo.js",
+    "build:site": "node tools/build-site.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "test:e2e": "node tests/e2e/smoke.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "mammoth": "^1.8.0",
+    "multer": "^2.5.0",
+    "nodemailer": "^6.9.16",
+    "pdf-parse": "1.1.1"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.65.1"
+  }
+}
