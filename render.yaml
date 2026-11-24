@@ -24,6 +24,8 @@ services:
         sync: false       # you type this in the Render dashboard
       - key: ADMIN_PASSWORD
         sync: false       # you type this in the Render dashboard (never put it in the repo)
+      - key: ADMIN_SYNC_FROM_ENV
+        value: "true"     # admin login always matches ADMIN_EMAIL / ADMIN_PASSWORD set in Render
       - key: ADMIN_NAME
         value: Cuatro Administrator
     # --- Persistent storage (paid plans only). Uncomment, and also set plan: starter above. ---

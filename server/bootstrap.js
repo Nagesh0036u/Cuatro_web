@@ -25,6 +25,12 @@ async function createAdmin({ email, password, name }) {
 
 /** On start-up: if ADMIN_EMAIL / ADMIN_PASSWORD are set and no admin exists yet, create the first one. */
 async function ensureInitialAdmin(config) {
+  // ADMIN_SYNC_FROM_ENV=true: the admin e-mail/password in the environment always win (handy on hosts without a shell).
+  if (process.env.ADMIN_SYNC_FROM_ENV === 'true' && config.admin.email && config.admin.password) {
+    const r = await createAdmin(config.admin);
+    console.log(`Administrator ${r.created ? 'created' : 'password synced'} from environment: ${config.admin.email}`);
+    return r;
+  }
   const count = db.get("SELECT COUNT(*) AS n FROM users WHERE role = 'admin'").n;
   if (count > 0) return null;
   if (!config.admin.email || !config.admin.password) {
