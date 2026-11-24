@@ -45,7 +45,7 @@ function head({ title, desc, p, noindex }) {
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
     <!-- ===========  All Stylesheet ================= -->
     <link rel="stylesheet" href="${p}assets/vendors/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="${p}assets/vendors/bootstrap-select/bootstrap-select.min.css">
@@ -438,12 +438,6 @@ ${items.map(([q, a], i) => `                            <div class="accrodion${i
 // ------------------------------------------------------------------------------------------------
 // public pages
 // ------------------------------------------------------------------------------------------------
-/** Two identical halves so the CSS loop (0 to -50%) is seamless. */
-function tapeItems(list) {
-  const half = [...list, ...list].map((x) => `                    <span class="cuatro-tape__item"><img src="assets/images/shapes/star.png" alt> ${esc(x)}</span>`).join('\n');
-  return half + '\n' + half;
-}
-
 function buildHome() {
   const p = '';
   const slides = [
@@ -782,21 +776,6 @@ ${[['icon-expertise-1', 5, 'Core <br> Services'], ['icon-verified-2', 19, 'Job <
             </div>
         </section>
         <!-- Benefit section End -->
-
-        <!-- Taglines: two bands scrolling in opposite directions -->
-        <div class="cuatro-tape wow fadeInUp" data-wow-delay="300ms" aria-label="Cuatro services and tagline">
-            <div class="cuatro-tape__band cuatro-tape__band--a" aria-hidden="true">
-                <div class="cuatro-tape__track cuatro-tape__track--left">
-${tapeItems(services.map((s) => s.title))}
-                </div>
-            </div>
-            <div class="cuatro-tape__band cuatro-tape__band--b" aria-hidden="true">
-                <div class="cuatro-tape__track cuatro-tape__track--right">
-${tapeItems([company.tagline.replace(/\.$/, ''), 'Careers at Cuatro'])}
-                </div>
-            </div>
-        </div>
-        <!-- Taglines end -->
 
 ${cta(p)}`;
   page({ file: 'index.html', title: 'Home', desc: `${company.name}. ${company.tagline}`, body });
