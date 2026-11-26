@@ -353,3 +353,83 @@ img { border-radius: var(--cr-sm); }
 .cx-verify__msg.err { color: var(--cuatro-danger, #d64545); }
 .cx-verified #f-email { border-color: var(--cuatro-success, #2e9d62) !important; }
 @media (max-width: 480px) { .cx-verify__row { flex-direction: column; } .cx-verify__btn { min-height: 46px; } }
+
+/* ===================== Job Seeker: Login / Sign Up card ===================== */
+.cx-sr { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.cx-auth { padding: 90px 0 110px; position: relative; }
+.cx-auth__card {
+  max-width: 480px; margin: 0 auto; padding: 42px 38px 34px; position: relative;
+  background: linear-gradient(165deg, rgba(27, 40, 80, 0.92), rgba(15, 23, 48, 0.96));
+  border: 1px solid rgba(143, 163, 199, 0.18); border-radius: 28px;
+  box-shadow: 0 30px 70px -25px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(243, 238, 230, 0.06);
+}
+.cx-auth__card::before { /* copper glow on top edge */
+  content: ""; position: absolute; left: 18%; right: 18%; top: -1px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #E8743B, transparent);
+}
+.cx-auth__brand { text-align: center; margin-bottom: 18px; }
+.cx-auth__brand img { display: inline-block; height: auto; max-width: 170px; }
+.cx-auth__title { text-align: center; color: #F3EEE6; font-size: 30px; line-height: 1.2; margin: 0 0 6px; }
+.cx-auth__sub { text-align: center; color: #8FA3C7; margin: 0 0 26px; font-size: 15px; }
+
+.cx-tabs { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 5px; margin-bottom: 26px;
+  background: rgba(10, 15, 30, 0.6); border: 1px solid rgba(143, 163, 199, 0.16); border-radius: 16px; }
+.cx-tabs__pill { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc(50% - 5px); border-radius: 12px;
+  background: linear-gradient(135deg, #E8743B, #F0965F); box-shadow: 0 8px 20px -8px rgba(232, 116, 59, 0.7);
+  transition: transform 0.35s cubic-bezier(.4, 0, .2, 1); }
+.cx-auth__card[data-tab="signup"] .cx-tabs__pill { transform: translateX(100%); }
+.cx-tabs__btn { position: relative; z-index: 1; border: 0; background: transparent; padding: 11px 10px; border-radius: 12px;
+  font-weight: 700; font-size: 15px; color: #8FA3C7; cursor: pointer; transition: color 0.3s; }
+.cx-tabs__btn[aria-selected="true"] { color: #0A0F1E; }
+.cx-tabs__btn:focus-visible { outline: 2px solid #F3EEE6; outline-offset: 2px; }
+
+.cx-panel { animation: cxFade 0.35s ease; }
+.cx-panel[hidden] { display: none; }
+@keyframes cxFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.cx-form .cx-field { margin-bottom: 14px; }
+.cx-input { position: relative; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 16px; min-height: 54px;
+  background: rgba(10, 15, 30, 0.55); border: 1px solid rgba(143, 163, 199, 0.2); border-radius: 14px;
+  transition: border-color 0.25s, box-shadow 0.25s; }
+.cx-input:focus-within { border-color: #E8743B; box-shadow: 0 0 0 4px rgba(232, 116, 59, 0.15); }
+.cx-input .cx-ico { width: 20px; height: 20px; flex: 0 0 20px; fill: none; stroke: #8FA3C7; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.25s; }
+.cx-input:focus-within .cx-ico { stroke: #E8743B; }
+.cuatro-form .cx-input input, .cx-input input { flex: 1 1 auto; min-width: 0; height: 52px; padding: 0; border: 0 !important; background: transparent !important;
+  color: #F3EEE6; font-size: 15px; box-shadow: none !important; outline: none; border-radius: 0; }
+.cx-input input::placeholder { color: rgba(143, 163, 199, 0.75); }
+.cx-input input[readonly] { color: #cfd8ea; }
+.cx-input input[type=number]::-webkit-inner-spin-button { opacity: .4; }
+.cx-input:has(input.is-invalid) { border-color: #e5564a; }
+.cx-eye { flex: 0 0 auto; display: grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; }
+.cx-eye .cx-ico { stroke: #8FA3C7; }
+.cx-eye:hover, .cx-eye.is-on { background: rgba(143, 163, 199, 0.12); }
+.cx-eye.is-on .cx-ico { stroke: #E8743B; }
+.cx-inline-btn { flex: 0 0 auto; border: 0; border-radius: 10px; padding: 9px 14px; font-weight: 700; font-size: 13px; white-space: nowrap; cursor: pointer;
+  color: #0A0F1E; background: linear-gradient(135deg, #E8743B, #F0965F); transition: opacity 0.2s, transform 0.2s; }
+.cx-inline-btn:hover:not([disabled]) { transform: translateY(-1px); }
+.cx-inline-btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+.cx-verified .cx-inline-btn[disabled] { background: #2e9d62; color: #fff; opacity: 1; }
+.cx-verified #email-verify .cx-input:first-of-type { border-color: #4fc58a; }
+.cx-verify__code { margin-top: 10px; }
+.cx-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.cx-form .cf-help { display: block; margin: 6px 4px 0; color: #8FA3C7; font-size: 12.5px; }
+.cx-form .cf-error { margin: 6px 4px 0; }
+.cx-form__row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 2px 2px 16px; font-size: 14px; }
+.cx-form__hint { color: rgba(143, 163, 199, 0.8); }
+.cx-link { color: #F3EEE6; font-weight: 700; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.3s, color 0.3s; }
+.cx-link:hover { color: #E8743B; background-size: 100% 1px; }
+.cx-check { margin: 4px 2px 6px; font-size: 14px; line-height: 1.5; color: #A9B8D6; }
+.cx-submit { width: 100%; justify-content: center; min-height: 54px; border-radius: 14px; margin-top: 6px; font-size: 16px; }
+.cx-auth__switch { text-align: center; margin: 22px 0 0; color: #8FA3C7; font-size: 15px; }
+.cx-auth__note { text-align: center; margin: 8px 0 0; color: rgba(143, 163, 199, 0.7); font-size: 13px; }
+.cx-form .cf-status { margin: 4px 2px 10px; }
+@media (max-width: 575px) {
+  .cx-auth { padding: 60px 0 80px; }
+  .cx-auth__card { padding: 32px 20px 26px; border-radius: 22px; }
+  .cx-auth__title { font-size: 25px; }
+  .cx-grid2 { grid-template-columns: 1fr; }
+  .cx-form__hint { display: none; }
+  .cx-form__row { justify-content: flex-end; }
+}
+
+.cx-form__row--end { justify-content: flex-end; }

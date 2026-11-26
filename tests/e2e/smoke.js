@@ -110,7 +110,8 @@ async function overflow(page) {
   await page.click('a:has-text("Apply Now")');
   await page.waitForURL(/student-portal\/login/);
   check(true, 'Apply Now redirects unauthenticated visitor to login');
-  await page.click('a:has-text("Create a student account")');
+  await page.click('#tab-signup');
+  check(/\/student-portal\/register/.test(page.url()) && await page.isVisible('#register-form'), 'Sign Up tab opens on the Job Seeker page');
   await page.waitForSelector('#register-form');
   const stamp = Date.now();
   const email = `ui.student.${stamp}@gmail.com`;
@@ -125,11 +126,7 @@ async function overflow(page) {
   await page.fill('#f-contact_number', '+91 9876501234');
   await page.fill('#f-password', 'Student1234');
   await page.fill('#f-confirm_password', 'Student1234');
-  await page.fill('#f-college', 'Test University');
-  await page.fill('#f-degree', "Bachelor's degree");
-  await page.fill('#f-specialisation', 'Computer Science');
   await page.fill('#f-graduation_year', '2025');
-  await page.fill('#f-skills', 'Python, SQL');
   await page.screenshot({ path: path.join(OUT, 'student-register.png'), fullPage: true });
   await page.click('#register-form button[type=submit]');
   await page.waitForTimeout(500);
@@ -139,6 +136,13 @@ async function overflow(page) {
   await page.waitForURL(/student-portal\/profile/);
   check(true, 'registration completes and opens profile');
   await page.waitForSelector('#profile-form');
+  await page.fill('#f-college', 'Test University');
+  await page.fill('#f-degree', "Bachelor's degree");
+  await page.fill('#f-specialisation', 'Computer Science');
+  await page.fill('#f-skills', 'Python, SQL');
+  await page.click('#profile-form button[type=submit]');
+  await page.waitForSelector('#profile-form .cf-status.ok');
+  check(true, 'college, degree and skills saved in the profile');
   await page.screenshot({ path: path.join(OUT, 'student-profile.png') });
 
   await page.goto(`${BASE}/student-portal/resume`, { waitUntil: 'networkidle' });

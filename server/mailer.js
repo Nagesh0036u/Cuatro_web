@@ -5,13 +5,15 @@ const config = require('./config');
 let transporter = null;
 const outbox = []; // captured messages when no mail service is configured (non-production only; used by tests)
 
-const brevoKey = () => process.env.BREVO_API_KEY || '';
+// MAIL_TRANSPORT=log forces print-only mode (used by test runs so they never e-mail real people).
+const logOnly = () => process.env.MAIL_TRANSPORT === 'log';
+const brevoKey = () => (logOnly() ? '' : process.env.BREVO_API_KEY || '');
 /** True when real e-mail can be sent: Brevo HTTP API (for hosts that block SMTP) or SMTP. */
-const smtpConfigured = () => !!(brevoKey() || config.smtp.host);
+const smtpConfigured = () => !logOnly() && !!(brevoKey() || config.smtp.host);
 
 function getTransport() {
   if (transporter !== null) return transporter;
-  if (!config.smtp.host) { transporter = false; return transporter; }
+  if (!config.smtp.host || logOnly()) { transporter = false; return transporter; }
   const nodemailer = require('nodemailer');
   transporter = nodemailer.createTransport({
     host: config.smtp.host,

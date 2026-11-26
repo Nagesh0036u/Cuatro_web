@@ -13,6 +13,7 @@ async function startServer() {
   process.env.DISABLE_IP_RATE_LIMIT = 'true';
   process.env.BCRYPT_ROUNDS = '4';
   process.env.NODE_ENV = 'test';
+  process.env.MAIL_TRANSPORT = 'log'; // never send real e-mail from tests
   process.env.ADMIN_EMAIL = '';
   process.env.ADMIN_PASSWORD = '';
   const config = require('../server/config');

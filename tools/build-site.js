@@ -1,4 +1,5 @@
 'use strict';
+const { jobSeekerBody } = require('./job-seeker-auth');
 
 /**
  * Generates the Cuatro Tech Solutions pages from the Ostech template structure.
@@ -85,8 +86,7 @@ ${services.map((s) => `                                    <li><a href="${p}${s.
                                 <a href="${p}careers.html">Careers at Cuatro</a>
                                 <ul class="sub-menu">
                                     <li><a href="${p}careers.html">Open Positions</a></li>
-                                    <li><a href="${p}student-portal/login">Student Login</a></li>
-                                    <li><a href="${p}student-portal/register">Student Registration</a></li>
+                                    <li><a href="${p}student-portal/login">Job Seeker</a></li>
                                 </ul>
                             </li>
                             <li><a href="${p}faq.html">FAQ</a></li>
@@ -161,7 +161,7 @@ function footer(p) {
                                 <ul class="list-unstyled footer-widget__links">
                                     <li class="footer-widget__links__item"><a href="${p}about.html">About Us</a></li>
                                     <li class="footer-widget__links__item"><a href="${p}careers.html">Careers at Cuatro</a></li>
-                                    <li class="footer-widget__links__item"><a href="${p}student-portal/login">Student Portal</a></li>
+                                    <li class="footer-widget__links__item"><a href="${p}student-portal/login">Job Seeker</a></li>
                                     <li class="footer-widget__links__item"><a href="${p}faq.html">FAQ</a></li>
                                     <li class="footer-widget__links__item"><a href="${p}contact.html">Contact</a></li>
                                 </ul>
@@ -1224,8 +1224,8 @@ function buildCareers() {
                     </div>
                     <div class="col-lg-4">
                         <div class="cuatro-actions">
-                        <a href="student-portal/register" class="ostech-btn">Create Student Account</a>
-                        <a href="student-portal/login" class="ostech-btn ostech-btn--secondary">Student Login</a>
+                        <a href="student-portal/register" class="ostech-btn">Sign Up</a>
+                        <a href="student-portal/login" class="ostech-btn ostech-btn--secondary">Job Seeker Login</a>
                         </div>
                     </div>
                 </div>
@@ -1383,47 +1383,14 @@ ${form.fields}
 
 function buildPortals() {
   // ---- student: auth pages
-  authPage({
-    area: 'student', file: 'login', title: 'Student Login', dataPage: 'login',
-    intro: 'Sign in to manage your profile, resume and job applications.',
-    form: {
-      id: 'login-form', button: 'Login',
-      fields: `${field({ name: 'email', label: 'Email address', type: 'email', required: true, autocomplete: 'email' })}
-${field({ name: 'password', label: 'Password', type: 'password', required: true, autocomplete: 'current-password' })}`
-    },
-    footerLinks: '<a href="/student-portal/forgot-password" id="forgot-link">Forgot password?</a> <span>&middot;</span> <a href="/student-portal/register">Create a student account</a>'
-  });
-  authPage({
-    area: 'student', file: 'register', title: 'Student Registration', dataPage: 'register',
-    intro: 'Verify your email address with the code we send you, then complete the form to create your account.',
-    form: {
-      id: 'register-form', button: 'Create Account', wide: true,
-      fields: `${field({ name: 'full_name', label: 'Full name', required: true, autocomplete: 'name', col: 'cf-col-12' })}
-<div class="cf-group cf-col-12 cx-verify" id="email-verify">
-                                    <label for="f-email">Email address <span class="cf-req" aria-hidden="true">*</span></label>
-                                    <div class="cx-verify__row"><input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"><button type="button" class="ostech-btn cx-verify__btn" id="send-code"><span>Send Code</span></button></div>
-                                    <div class="cf-error" data-error-for="email"></div>
-                                    <div class="cx-verify__code" id="code-row" hidden>
-                                        <label for="f-code">Verification code sent to your email</label>
-                                        <div class="cx-verify__row"><input id="f-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="6-digit code"><button type="button" class="ostech-btn cx-verify__btn" id="verify-code"><span>Verify</span></button></div>
-                                        <div class="cf-error" data-error-for="code"></div>
-                                    </div>
-                                    <div class="cx-verify__msg" id="verify-msg" role="status" aria-live="polite"></div>
-                                    <input type="hidden" name="verify_token" id="f-verify-token">
-                                </div>
-${field({ name: 'contact_number', label: 'Contact number', type: 'tel', required: true, autocomplete: 'tel', col: 'cf-col-6' })}
-${field({ name: 'location', label: 'Location', autocomplete: 'address-level2', col: 'cf-col-6' })}
-${field({ name: 'password', label: 'Password', type: 'password', required: true, autocomplete: 'new-password', col: 'cf-col-6', help: 'At least 8 characters with a letter and a number.' })}
-${field({ name: 'confirm_password', label: 'Confirm password', type: 'password', required: true, autocomplete: 'new-password', col: 'cf-col-6' })}
-${field({ name: 'college', label: 'College / University', col: 'cf-col-6' })}
-${field({ name: 'degree', label: 'Degree', col: 'cf-col-6', placeholder: "e.g. Bachelor's degree" })}
-${field({ name: 'specialisation', label: 'Course / Specialisation', col: 'cf-col-6' })}
-${field({ name: 'graduation_year', label: 'Graduation year', type: 'number', required: true, col: 'cf-col-6', attrs: 'min="1970" max="2100"' })}
-${field({ name: 'skills', label: 'Skills', col: 'cf-col-12', placeholder: 'Comma separated, e.g. Python, SQL, Figma' })}
-<div class="cf-group cf-col-12"><label for="f-experience">Experience (if applicable)</label><textarea id="f-experience" name="experience" rows="3" maxlength="2000"></textarea><div class="cf-error" data-error-for="experience"></div></div>`,
-      extra: '<label class="cf-check"><input type="checkbox" name="terms" required> <span>I agree that Cuatro Tech Solutions may store and process my details and resume for recruitment purposes.</span></label><div class="cf-error" data-error-for="terms"></div>'
-    },
-    footerLinks: 'Already registered? <a href="/student-portal/login">Log in</a>'
+  // Job Seeker: one page with Login / Sign Up tabs (login.html opens Login, register.html opens Sign Up)
+  [['login', 'login', 'Job Seeker Login'], ['register', 'signup', 'Job Seeker Sign Up']].forEach(([file, tab, title]) => {
+    page({
+      file: `student-portal/${file}.html`, title, desc: `${title} - ${company.name}`, p: '/', noindex: true,
+      body: `${pageHeader('Job Seeker', [{ href: '/careers.html', label: 'Careers at Cuatro' }, { label: 'Job Seeker' }], '/')}
+${jobSeekerBody({ tab, logo: LOGO, companyName: company.name })}`,
+      scripts: ['cuatro-student.js'], dataPage: tab === 'login' ? 'student-login' : 'student-register'
+    });
   });
   authPage({
     area: 'student', file: 'forgot-password', title: 'Forgot Password', dataPage: 'forgot',

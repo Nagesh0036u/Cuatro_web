@@ -6,7 +6,7 @@
   const P = '/student-portal';
 
   // ------------------------------------------------------------------ authentication pages
-  CT.on('student-login', () => {
+  function initLogin() {
     // "Forgot password?" e-mails the reset link to the address already typed in the login form.
     const forgot = document.getElementById('forgot-link');
     const loginForm = document.getElementById('login-form');
@@ -34,9 +34,9 @@
     CT.bindForm(document.getElementById('login-form'),
       (v) => CT.api('POST', '/api/auth/student/login', { email: v.email, password: v.password }),
       (res) => { CT.setCsrf(res.csrfToken); location.href = CT.safeNext(P + '/dashboard'); });
-  });
+  }
 
-  CT.on('student-register', () => {
+  function initRegister() {
     const form = document.getElementById('register-form');
     const email = document.getElementById('f-email');
     const codeRow = document.getElementById('code-row');
@@ -98,8 +98,52 @@
       if (!v.terms) { const err = new Error('Please correct the highlighted fields.'); err.fields = { terms: 'Please accept to continue.' }; throw err; }
       delete v.terms;
       return CT.api('POST', '/api/auth/student/register', v);
-    }, (res) => { CT.setCsrf(res.csrfToken); location.href = CT.safeNext(P + '/profile?welcome=1'); });
-  });
+    }, (res) => { CT.setCsrf(res.csrfToken); location.href = P + '/profile?welcome=1'; });
+  }
+
+  // Job Seeker page: Login / Sign Up tabs on one card
+  function initJobSeeker(defaultTab) {
+    const card = document.querySelector('.cx-auth__card');
+    if (!card) return;
+    const texts = {
+      login: ['Welcome Back', 'Sign in to your Job Seeker account', 'Job Seeker Login'],
+      signup: ['Create Your Account', 'Verify your email, then set your password', 'Job Seeker Sign Up']
+    };
+    const show = (tab, focus) => {
+      card.setAttribute('data-tab', tab);
+      card.querySelectorAll('.cx-tabs__btn').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+      document.getElementById('panel-login').hidden = tab !== 'login';
+      document.getElementById('panel-signup').hidden = tab !== 'signup';
+      document.getElementById('auth-title').textContent = texts[tab][0];
+      document.getElementById('auth-sub').textContent = texts[tab][1];
+      document.title = texts[tab][2] + ' || Cuatro Tech Solutions';
+      const path = tab === 'login' ? P + '/login' : P + '/register';
+      if (location.pathname.replace(/\.html$/, '') !== path) history.replaceState(null, '', path + location.search);
+      if (focus) { const first = document.querySelector('#panel-' + tab + ' input:not([type=hidden])'); if (first) first.focus(); }
+    };
+    card.querySelectorAll('.cx-tabs__btn').forEach((b) => b.addEventListener('click', () => show(b.dataset.tab, true)));
+    card.querySelectorAll('[data-switch]').forEach((a) => a.addEventListener('click', (ev) => { ev.preventDefault(); show(a.dataset.switch, true); }));
+    // arrow keys move between tabs
+    card.querySelector('.cx-tabs').addEventListener('keydown', (ev) => {
+      if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
+      const next = card.getAttribute('data-tab') === 'login' ? 'signup' : 'login';
+      show(next, false); document.getElementById('tab-' + next).focus();
+    });
+    // show / hide password
+    card.querySelectorAll('.cx-eye').forEach((btn) => btn.addEventListener('click', () => {
+      const inp = btn.parentElement.querySelector('input');
+      const on = inp.type === 'password';
+      inp.type = on ? 'text' : 'password';
+      btn.setAttribute('aria-pressed', String(on));
+      btn.setAttribute('aria-label', on ? 'Hide password' : 'Show password');
+      btn.classList.toggle('is-on', on);
+    }));
+    show(defaultTab, false);
+    initLogin();
+    initRegister();
+  }
+  CT.on('student-login', () => initJobSeeker('login'));
+  CT.on('student-register', () => initJobSeeker('signup'));
 
   CT.on('student-forgot', () => {
     CT.bindForm(document.getElementById('forgot-form'), (v) => CT.api('POST', '/api/auth/student/forgot-password', v),

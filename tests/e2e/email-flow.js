@@ -31,7 +31,8 @@ async function lastFromLog(re) {
 
   // 2. invalid / fake addresses get no code
   await page.fill('#f-email', 'someone@no-such-domain-cuatro-qa-4821.com');
-  await page.click('#send-code'); await page.waitForTimeout(2500);
+  await page.click('#send-code');
+  await page.waitForFunction(() => { const t = document.getElementById('verify-msg').textContent; return t && !/Sending code/.test(t); }, null, { timeout: 15000 });
   check(/cannot receive email/i.test(await page.textContent('#verify-msg')), 'domain without mail server is rejected');
   check(await page.isHidden('#code-row'), 'no code box shown for a bad address');
   await page.fill('#f-email', 'temp@mailinator.com'); await page.click('#send-code'); await page.waitForTimeout(800);
@@ -64,9 +65,9 @@ async function lastFromLog(re) {
   await p2.click('#forgot-link'); await p2.waitForTimeout(300);
   check(/type your account email/i.test(await p2.textContent('[data-error-for=email]')), 'forgot with empty email asks for the account email');
   check(/\/login/.test(p2.url()), 'forgot link stays on the login page');
-  await p2.fill('#f-email', 'nobody.here@gmail.com'); await p2.click('#forgot-link'); await p2.waitForTimeout(800);
+  await p2.fill('#l-email', 'nobody.here@gmail.com'); await p2.click('#forgot-link'); await p2.waitForTimeout(800);
   check(/no student account/i.test(await p2.textContent('#login-form .cf-status')), 'unknown email gets no reset email');
-  await p2.fill('#f-email', email); await p2.click('#forgot-link'); await p2.waitForTimeout(1000);
+  await p2.fill('#l-email', email); await p2.click('#forgot-link'); await p2.waitForTimeout(1000);
   check(/reset link has been sent to qa\*+/i.test(await p2.textContent('#login-form .cf-status')), 'forgot password sends to the account email: ' + await p2.textContent('#login-form .cf-status'));
   const link = await lastFromLog(/(https?:\/\/\S+\/student-portal\/reset-password\?token=[A-Za-z0-9_-]+)/g);
   check(!!link && link.startsWith(BASE), 'reset link e-mailed: ' + (link || 'none'));
@@ -76,9 +77,9 @@ async function lastFromLog(re) {
   check(/password has been updated/i.test(await p2.textContent('#reset-form .cf-status')), 'password reset succeeded');
   await p2.waitForURL(/\/student-portal\/login/, { timeout: 6000 }).catch(() => {});
   await p2.goto(BASE + '/student-portal/login', { waitUntil: 'networkidle' });
-  await p2.fill('#f-email', email); await p2.fill('#f-password', 'FirstPass123'); await p2.click('#login-form button[type=submit]'); await p2.waitForTimeout(800);
+  await p2.fill('#l-email', email); await p2.fill('#l-password', 'FirstPass123'); await p2.click('#login-form button[type=submit]'); await p2.waitForTimeout(800);
   check(/incorrect/i.test(await p2.textContent('#login-form .cf-status')), 'old password no longer works');
-  await p2.fill('#f-password', 'SecondPass456');
+  await p2.fill('#l-password', 'SecondPass456');
   await Promise.all([p2.waitForURL(/dashboard/, { timeout: 8000 }).catch(() => {}), p2.click('#login-form button[type=submit]')]);
   check(/dashboard/.test(p2.url()), 'login with the new password works');
   // reused link must fail

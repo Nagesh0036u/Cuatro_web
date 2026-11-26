@@ -8,11 +8,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Cuatro Tech Solutions">
-    <meta name="description" content="Student Registration - Cuatro Tech Solutions">
+    <meta name="description" content="Job Seeker Sign Up - Cuatro Tech Solutions">
     <meta name="robots" content="noindex, nofollow">
 
     <!-- ======== Page title ============ -->
-    <title>Student Registration || Cuatro Tech Solutions</title>
+    <title>Job Seeker Sign Up || Cuatro Tech Solutions</title>
 
     <!-- ========== Favicon Icon ========== -->
     <link rel="shortcut icon" href="/assets/images/brand/cuatro-icon.png" type="image/png">
@@ -88,8 +88,7 @@
                                 <a href="/careers.html">Careers at Cuatro</a>
                                 <ul class="sub-menu">
                                     <li><a href="/careers.html">Open Positions</a></li>
-                                    <li><a href="/student-portal/login">Student Login</a></li>
-                                    <li><a href="/student-portal/register">Student Registration</a></li>
+                                    <li><a href="/student-portal/login">Job Seeker</a></li>
                                 </ul>
                             </li>
                             <li><a href="/faq.html">FAQ</a></li>
@@ -119,81 +118,97 @@
         </header>
 
         <section class="page-header">
-            <div class="page-header__bg" style="background-image: url(/assets/images/backgrounds/banners/banner-student.jpg);"></div>
+            <div class="page-header__bg" style="background-image: url(/assets/images/backgrounds/page-header-bg-1-1.jpg);"></div>
             <div class="container">
-                <h2 class="page-header__title">Student Registration</h2>
+                <h2 class="page-header__title">Job Seeker</h2>
                 <ul class="ostech-breadcrumb list-unstyled">
                     <li><a href="/index.html">Home</a></li>
-                    <li><span>Student Portal</span></li>
-                    <li><span>Student Registration</span></li>
+                    <li><a href="/careers.html">Careers at Cuatro</a></li>
+                    <li><span>Job Seeker</span></li>
                 </ul>
             </div>
         </section>
 
-        <section class="login-page cuatro-auth">
+        <section class="cx-auth">
             <div class="container">
-                <div class="login-page__inner">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-8 wow fadeInUp animated" data-wow-delay="300ms">
-                            <div class="login-page__wrap">
-                                <div class="cuatro-auth__brand"><img src="/assets/images/brand/cuatro-logo.png" alt="Cuatro Tech Solutions" width="190"></div>
-                                <h3 class="login-page__wrap__title">Student Registration</h3>
-                                <p class="cuatro-muted">Verify your email address with the code we send you, then complete the form to create your account.</p>
-                                <form class="cuatro-form" id="register-form" novalidate>
-                                    <div class="cf-row">
-<div class="cf-group cf-col-12"><label for="f-full_name">Full name <span class="cf-req" aria-hidden="true">*</span></label>
-                                    <input id="f-full_name" name="full_name" type="text" required autocomplete="name"  >
-                                    <div class="cf-error" data-error-for="full_name"></div></div>
-<div class="cf-group cf-col-12 cx-verify" id="email-verify">
-                                    <label for="f-email">Email address <span class="cf-req" aria-hidden="true">*</span></label>
-                                    <div class="cx-verify__row"><input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"><button type="button" class="ostech-btn cx-verify__btn" id="send-code"><span>Send Code</span></button></div>
-                                    <div class="cf-error" data-error-for="email"></div>
-                                    <div class="cx-verify__code" id="code-row" hidden>
-                                        <label for="f-code">Verification code sent to your email</label>
-                                        <div class="cx-verify__row"><input id="f-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="6-digit code"><button type="button" class="ostech-btn cx-verify__btn" id="verify-code"><span>Verify</span></button></div>
-                                        <div class="cf-error" data-error-for="code"></div>
+                <div class="cx-auth__card wow fadeInUp animated" data-wow-delay="200ms" data-tab="signup">
+                    <div class="cx-auth__brand"><img src="/assets/images/brand/cuatro-logo.png" alt="Cuatro Tech Solutions" width="170"></div>
+                    <h2 class="cx-auth__title" id="auth-title">Create Your Account</h2>
+                    <p class="cx-auth__sub" id="auth-sub">Verify your email, then set your password</p>
+
+                    <div class="cx-tabs" role="tablist" aria-label="Job Seeker account">
+                        <span class="cx-tabs__pill" aria-hidden="true"></span>
+                        <button type="button" class="cx-tabs__btn" role="tab" id="tab-login" aria-controls="panel-login" aria-selected="false" data-tab="login">Login</button>
+                        <button type="button" class="cx-tabs__btn" role="tab" id="tab-signup" aria-controls="panel-signup" aria-selected="true" data-tab="signup">Sign Up</button>
+                    </div>
+
+                    <div class="cx-panel" role="tabpanel" id="panel-login" aria-labelledby="tab-login" hidden>
+                        <form class="cuatro-form cx-form" id="login-form" novalidate>
+                            <div class="cf-group cx-field">
+                                        <label class="cx-sr" for="l-email">Email Address</label>
+                                        <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg><input id="l-email" name="email" type="email" placeholder="Email Address" required autocomplete="email" ></div>
+                                        <div class="cf-error" data-error-for="email"></div>
                                     </div>
-                                    <div class="cx-verify__msg" id="verify-msg" role="status" aria-live="polite"></div>
-                                    <input type="hidden" name="verify_token" id="f-verify-token">
+                            <div class="cf-group cx-field">
+                                        <label class="cx-sr" for="l-password">Password</label>
+                                        <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><input id="l-password" name="password" type="password" placeholder="Password" required autocomplete="current-password" ><button type="button" class="cx-eye" aria-label="Show password" aria-pressed="false"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+                                        <div class="cf-error" data-error-for="password"></div>
+                                    </div>
+                            <div class="cx-form__row cx-form__row--end"><a href="/student-portal/forgot-password" id="forgot-link" class="cx-link">Forgot password?</a></div>
+                            <div class="cf-status" role="status" aria-live="polite"></div>
+                            <button type="submit" class="ostech-btn cx-submit"><span>Sign In</span></button>
+                        </form>
+                        <p class="cx-auth__switch">Don't have an account? <a href="/student-portal/register" class="cx-link" data-switch="signup">Sign up</a></p>
+                    </div>
+
+                    <div class="cx-panel" role="tabpanel" id="panel-signup" aria-labelledby="tab-signup">
+                        <form class="cuatro-form cx-form" id="register-form" novalidate>
+                            <div class="cf-group cx-field">
+                                        <label class="cx-sr" for="f-full_name">Full Name</label>
+                                        <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><input id="f-full_name" name="full_name" type="text" placeholder="Full Name" required autocomplete="name" ></div>
+                                        <div class="cf-error" data-error-for="full_name"></div>
+                                    </div>
+                            <div class="cf-group cx-field cx-verify" id="email-verify">
+                                <label class="cx-sr" for="f-email">Email Address</label>
+                                <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg><input id="f-email" name="email" type="email" placeholder="Email Address" required autocomplete="email"><button type="button" class="cx-inline-btn" id="send-code"><span>Send Code</span></button></div>
+                                <div class="cf-error" data-error-for="email"></div>
+                                <div class="cx-verify__code" id="code-row" hidden>
+                                    <label class="cx-sr" for="f-code">Verification code</label>
+                                    <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/></svg><input id="f-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="6-digit code from your email"><button type="button" class="cx-inline-btn" id="verify-code"><span>Verify</span></button></div>
+                                    <div class="cf-error" data-error-for="code"></div>
                                 </div>
-<div class="cf-group cf-col-6"><label for="f-contact_number">Contact number <span class="cf-req" aria-hidden="true">*</span></label>
-                                    <input id="f-contact_number" name="contact_number" type="tel" required autocomplete="tel"  >
-                                    <div class="cf-error" data-error-for="contact_number"></div></div>
-<div class="cf-group cf-col-6"><label for="f-location">Location</label>
-                                    <input id="f-location" name="location" type="text"  autocomplete="address-level2"  >
-                                    <div class="cf-error" data-error-for="location"></div></div>
-<div class="cf-group cf-col-6"><label for="f-password">Password <span class="cf-req" aria-hidden="true">*</span></label>
-                                    <input id="f-password" name="password" type="password" required autocomplete="new-password"  ><small class="cf-help">At least 8 characters with a letter and a number.</small>
-                                    <div class="cf-error" data-error-for="password"></div></div>
-<div class="cf-group cf-col-6"><label for="f-confirm_password">Confirm password <span class="cf-req" aria-hidden="true">*</span></label>
-                                    <input id="f-confirm_password" name="confirm_password" type="password" required autocomplete="new-password"  >
-                                    <div class="cf-error" data-error-for="confirm_password"></div></div>
-<div class="cf-group cf-col-6"><label for="f-college">College / University</label>
-                                    <input id="f-college" name="college" type="text"    >
-                                    <div class="cf-error" data-error-for="college"></div></div>
-<div class="cf-group cf-col-6"><label for="f-degree">Degree</label>
-                                    <input id="f-degree" name="degree" type="text"   placeholder="e.g. Bachelor's degree" >
-                                    <div class="cf-error" data-error-for="degree"></div></div>
-<div class="cf-group cf-col-6"><label for="f-specialisation">Course / Specialisation</label>
-                                    <input id="f-specialisation" name="specialisation" type="text"    >
-                                    <div class="cf-error" data-error-for="specialisation"></div></div>
-<div class="cf-group cf-col-6"><label for="f-graduation_year">Graduation year <span class="cf-req" aria-hidden="true">*</span></label>
-                                    <input id="f-graduation_year" name="graduation_year" type="number" required   min="1970" max="2100">
-                                    <div class="cf-error" data-error-for="graduation_year"></div></div>
-<div class="cf-group cf-col-12"><label for="f-skills">Skills</label>
-                                    <input id="f-skills" name="skills" type="text"   placeholder="Comma separated, e.g. Python, SQL, Figma" >
-                                    <div class="cf-error" data-error-for="skills"></div></div>
-<div class="cf-group cf-col-12"><label for="f-experience">Experience (if applicable)</label><textarea id="f-experience" name="experience" rows="3" maxlength="2000"></textarea><div class="cf-error" data-error-for="experience"></div></div>
-                                    </div>
-                                    <label class="cf-check"><input type="checkbox" name="terms" required> <span>I agree that Cuatro Tech Solutions may store and process my details and resume for recruitment purposes.</span></label><div class="cf-error" data-error-for="terms"></div>
-                                    <div class="cf-status" role="status" aria-live="polite"></div>
-                                    <div class="login-page__form-btn-box">
-                                        <button type="submit" class="ostech-btn"><span>Create Account</span></button>
-                                    </div>
-                                </form>
-                                <div class="cuatro-auth__links">Already registered? <a href="/student-portal/login">Log in</a></div>
+                                <div class="cx-verify__msg" id="verify-msg" role="status" aria-live="polite"></div>
+                                <input type="hidden" name="verify_token" id="f-verify-token">
                             </div>
-                        </div>
+                            <div class="cx-grid2">
+                                <div class="cf-group cx-field">
+                                        <label class="cx-sr" for="f-contact_number">Contact Number</label>
+                                        <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.6 3h3l1.5 4.5-2.2 1.4a11 11 0 0 0 6.2 6.2l1.4-2.2L21 14.4v3A2.6 2.6 0 0 1 18.4 20 15.4 15.4 0 0 1 4 5.6 2.6 2.6 0 0 1 6.6 3z"/></svg><input id="f-contact_number" name="contact_number" type="tel" placeholder="Contact Number" required autocomplete="tel" ></div>
+                                        <div class="cf-error" data-error-for="contact_number"></div>
+                                    </div>
+                                <div class="cf-group cx-field">
+                                        <label class="cx-sr" for="f-graduation_year">Graduation Year</label>
+                                        <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/></svg><input id="f-graduation_year" name="graduation_year" type="number" placeholder="Graduation Year" required min="1970" max="2100"></div>
+                                        <div class="cf-error" data-error-for="graduation_year"></div>
+                                    </div>
+                            </div>
+                            <div class="cf-group cx-field">
+                                        <label class="cx-sr" for="f-password">Password</label>
+                                        <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><input id="f-password" name="password" type="password" placeholder="Password" required autocomplete="new-password" ><button type="button" class="cx-eye" aria-label="Show password" aria-pressed="false"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+                                        <small class="cf-help">At least 8 characters with a letter and a number.</small><div class="cf-error" data-error-for="password"></div>
+                                    </div>
+                            <div class="cf-group cx-field">
+                                        <label class="cx-sr" for="f-confirm_password">Confirm Password</label>
+                                        <div class="cx-input"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><input id="f-confirm_password" name="confirm_password" type="password" placeholder="Confirm Password" required autocomplete="new-password" ><button type="button" class="cx-eye" aria-label="Show password" aria-pressed="false"><svg class="cx-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+                                        <div class="cf-error" data-error-for="confirm_password"></div>
+                                    </div>
+                            <label class="cf-check cx-check"><input type="checkbox" name="terms" required> <span>I agree that Cuatro Tech Solutions may store and process my details and resume for recruitment purposes.</span></label>
+                            <div class="cf-error" data-error-for="terms"></div>
+                            <div class="cf-status" role="status" aria-live="polite"></div>
+                            <button type="submit" class="ostech-btn cx-submit"><span>Create Account</span></button>
+                        </form>
+                        <p class="cx-auth__switch">Already have an account? <a href="/student-portal/login" class="cx-link" data-switch="login">Log in</a></p>
+                        <p class="cx-auth__note">College, skills and experience can be added in your profile after sign up.</p>
                     </div>
                 </div>
             </div>
@@ -228,7 +243,7 @@
                                 <ul class="list-unstyled footer-widget__links">
                                     <li class="footer-widget__links__item"><a href="/about.html">About Us</a></li>
                                     <li class="footer-widget__links__item"><a href="/careers.html">Careers at Cuatro</a></li>
-                                    <li class="footer-widget__links__item"><a href="/student-portal/login">Student Portal</a></li>
+                                    <li class="footer-widget__links__item"><a href="/student-portal/login">Job Seeker</a></li>
                                     <li class="footer-widget__links__item"><a href="/faq.html">FAQ</a></li>
                                     <li class="footer-widget__links__item"><a href="/contact.html">Contact</a></li>
                                 </ul>
