@@ -121,7 +121,7 @@ Configure one mail service in `.env` (or in the Render dashboard):
 Without a mail service, codes and links are printed in the server terminal (development only). In production,
 sign-up and password reset are refused with a clear message until e-mail is configured.
 Contact form messages are always saved in **Admin Portal > Contact Messages** and also e-mailed to `CONTACT_INBOX`
-when a mail service is configured. `npm run test:e2e:email` style check: `node tests/e2e/email-flow.js <url> <server-log>`.
+when a mail service is configured. Browser check: `node tests/e2e/email-flow.js <url> <server-log-file>` (server running without a mail service).
 
 ## Development
 
