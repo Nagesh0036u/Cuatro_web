@@ -64,6 +64,7 @@ function head({ title, desc, p, noindex, extraCss = [] }) {
     <link rel="stylesheet" href="${p}assets/css/ostech.css">
     <!-- Cuatro additions (careers, portals, forms). Uses the template's design tokens. -->
     <link rel="stylesheet" href="${p}assets/css/cuatro.css">
+    <link rel="stylesheet" href="${p}assets/css/cuatro-theme.css">
 ${extraCss.map((c) => `    <link rel="stylesheet" href="${p}assets/css/${c}">`).join("\n")}
 </head>
 `;
