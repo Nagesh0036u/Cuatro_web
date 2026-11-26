@@ -204,3 +204,16 @@ CREATE TABLE IF NOT EXISTS resume_docs (
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_resume_docs_student ON resume_docs(student_id);
+
+CREATE TABLE IF NOT EXISTS email_verifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL,
+  code_hash TEXT NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  expires_at TEXT NOT NULL,
+  verified_at TEXT,
+  token_hash TEXT,
+  consumed_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_email_verifications_email ON email_verifications(email);

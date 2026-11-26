@@ -102,9 +102,26 @@ Running it again for an existing admin resets that admin's password. Public user
 
 ## E-mail
 
-Contact form messages are always saved and visible in **Admin Portal > Contact Messages**. If you configure SMTP
-(`SMTP_*` in `.env`) they are also e-mailed to `CONTACT_INBOX`, and password-reset e-mails are sent to students.
-Without SMTP, reset links are printed in the server console (development only), so configure SMTP before going live.
+E-mail is required for two student flows:
+
+* **Sign-up verification.** The student enters an email and clicks *Send Code*. Addresses with bad syntax,
+  disposable providers, or a domain with no mail server (DNS MX check) are refused and no code is sent.
+  Otherwise a 6-digit code (10-minute expiry, 5 attempts, hashed at rest) is e-mailed. Only after the
+  correct code is entered can the account be created, and only for that exact address.
+* **Forgot password.** A single-use reset link (30 minutes) is e-mailed. After resetting, the old password
+  stops working, all sessions are signed out, and the student logs in with the new password.
+
+Configure one mail service in `.env` (or in the Render dashboard):
+
+* **Brevo HTTP API** (`BREVO_API_KEY`): works on Render free, which blocks SMTP ports. Create a free
+  brevo.com account, verify your sender address, create an API key, and set `MAIL_FROM` to that sender.
+* **SMTP** (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`), e.g. Gmail:
+  `smtp.gmail.com`, port `465`, `SMTP_SECURE=true`, your Gmail address and a Google *App Password*.
+
+Without a mail service, codes and links are printed in the server terminal (development only). In production,
+sign-up and password reset are refused with a clear message until e-mail is configured.
+Contact form messages are always saved in **Admin Portal > Contact Messages** and also e-mailed to `CONTACT_INBOX`
+when a mail service is configured. `npm run test:e2e:email` style check: `node tests/e2e/email-flow.js <url> <server-log>`.
 
 ## Development
 

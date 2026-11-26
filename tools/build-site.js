@@ -1395,11 +1395,22 @@ ${field({ name: 'password', label: 'Password', type: 'password', required: true,
   });
   authPage({
     area: 'student', file: 'register', title: 'Student Registration', dataPage: 'register',
-    intro: 'Create your candidate account. You can complete the remaining profile details later.',
+    intro: 'Verify your email address with the code we send you, then complete the form to create your account.',
     form: {
       id: 'register-form', button: 'Create Account', wide: true,
-      fields: `${field({ name: 'full_name', label: 'Full name', required: true, autocomplete: 'name', col: 'cf-col-6' })}
-${field({ name: 'email', label: 'Email address', type: 'email', required: true, autocomplete: 'email', col: 'cf-col-6' })}
+      fields: `${field({ name: 'full_name', label: 'Full name', required: true, autocomplete: 'name', col: 'cf-col-12' })}
+<div class="cf-group cf-col-12 cx-verify" id="email-verify">
+                                    <label for="f-email">Email address <span class="cf-req" aria-hidden="true">*</span></label>
+                                    <div class="cx-verify__row"><input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"><button type="button" class="ostech-btn cx-verify__btn" id="send-code"><span>Send Code</span></button></div>
+                                    <div class="cf-error" data-error-for="email"></div>
+                                    <div class="cx-verify__code" id="code-row" hidden>
+                                        <label for="f-code">Verification code sent to your email</label>
+                                        <div class="cx-verify__row"><input id="f-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="6-digit code"><button type="button" class="ostech-btn cx-verify__btn" id="verify-code"><span>Verify</span></button></div>
+                                        <div class="cf-error" data-error-for="code"></div>
+                                    </div>
+                                    <div class="cx-verify__msg" id="verify-msg" role="status" aria-live="polite"></div>
+                                    <input type="hidden" name="verify_token" id="f-verify-token">
+                                </div>
 ${field({ name: 'contact_number', label: 'Contact number', type: 'tel', required: true, autocomplete: 'tel', col: 'cf-col-6' })}
 ${field({ name: 'location', label: 'Location', autocomplete: 'address-level2', col: 'cf-col-6' })}
 ${field({ name: 'password', label: 'Password', type: 'password', required: true, autocomplete: 'new-password', col: 'cf-col-6', help: 'At least 8 characters with a letter and a number.' })}

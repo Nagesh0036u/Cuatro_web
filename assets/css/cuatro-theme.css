@@ -308,3 +308,7 @@ input:-webkit-autofill { -webkit-text-fill-color: #F3EEE6; box-shadow: 0 0 0 100
 
 /* service strip: light template shape -> dark */
 .service-page__bg { background-image: none !important; background: linear-gradient(180deg, #131D3B, #0F1730) !important; }
+
+.cx-verify__msg.ok { color: #9be3b9; }
+.cx-verify__msg.err { color: #ff9d94; }
+.cx-verified #f-email { border-color: #4fc58a !important; }

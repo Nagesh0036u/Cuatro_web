@@ -37,6 +37,7 @@ const config = {
     password: env.ADMIN_PASSWORD || '',
     name: env.ADMIN_NAME || 'Cuatro Administrator'
   },
+  get verifyMx() { return process.env.EMAIL_VERIFY_MX !== 'false' && process.env.NODE_ENV !== 'test'; },
   smtp: {
     host: env.SMTP_HOST || '',
     port: parseInt(env.SMTP_PORT || '587', 10),

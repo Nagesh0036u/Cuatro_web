@@ -339,3 +339,17 @@ img { border-radius: var(--cr-sm); }
 
 .about-two__ostech__item__inner, .about-two__thumb__icon__box { border-radius: var(--cr-md); }
 
+
+/* Email verification on registration */
+.cx-verify__row { display: flex; gap: 10px; align-items: stretch; }
+.cx-verify__row input { flex: 1 1 auto; min-width: 0; }
+.cx-verify__btn { flex: 0 0 auto; padding: 0 22px; white-space: nowrap; min-height: 52px; }
+.cx-verify__btn[disabled] { opacity: .6; cursor: not-allowed; }
+.cx-verify__code { margin-top: 14px; }
+.cx-verify__code[hidden] { display: none; }
+.cx-verify__msg { margin-top: 8px; font-weight: 600; font-size: 14px; }
+.cx-verify__msg:empty { display: none; }
+.cx-verify__msg.ok { color: var(--cuatro-success, #2e9d62); }
+.cx-verify__msg.err { color: var(--cuatro-danger, #d64545); }
+.cx-verified #f-email { border-color: var(--cuatro-success, #2e9d62) !important; }
+@media (max-width: 480px) { .cx-verify__row { flex-direction: column; } .cx-verify__btn { min-height: 46px; } }

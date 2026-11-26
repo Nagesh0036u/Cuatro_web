@@ -138,15 +138,24 @@
                             <div class="login-page__wrap">
                                 <div class="cuatro-auth__brand"><img src="/assets/images/brand/cuatro-logo.png" alt="Cuatro Tech Solutions" width="190"></div>
                                 <h3 class="login-page__wrap__title">Student Registration</h3>
-                                <p class="cuatro-muted">Create your candidate account. You can complete the remaining profile details later.</p>
+                                <p class="cuatro-muted">Verify your email address with the code we send you, then complete the form to create your account.</p>
                                 <form class="cuatro-form" id="register-form" novalidate>
                                     <div class="cf-row">
-<div class="cf-group cf-col-6"><label for="f-full_name">Full name <span class="cf-req" aria-hidden="true">*</span></label>
+<div class="cf-group cf-col-12"><label for="f-full_name">Full name <span class="cf-req" aria-hidden="true">*</span></label>
                                     <input id="f-full_name" name="full_name" type="text" required autocomplete="name"  >
                                     <div class="cf-error" data-error-for="full_name"></div></div>
-<div class="cf-group cf-col-6"><label for="f-email">Email address <span class="cf-req" aria-hidden="true">*</span></label>
-                                    <input id="f-email" name="email" type="email" required autocomplete="email"  >
-                                    <div class="cf-error" data-error-for="email"></div></div>
+<div class="cf-group cf-col-12 cx-verify" id="email-verify">
+                                    <label for="f-email">Email address <span class="cf-req" aria-hidden="true">*</span></label>
+                                    <div class="cx-verify__row"><input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"><button type="button" class="ostech-btn cx-verify__btn" id="send-code"><span>Send Code</span></button></div>
+                                    <div class="cf-error" data-error-for="email"></div>
+                                    <div class="cx-verify__code" id="code-row" hidden>
+                                        <label for="f-code">Verification code sent to your email</label>
+                                        <div class="cx-verify__row"><input id="f-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="6-digit code"><button type="button" class="ostech-btn cx-verify__btn" id="verify-code"><span>Verify</span></button></div>
+                                        <div class="cf-error" data-error-for="code"></div>
+                                    </div>
+                                    <div class="cx-verify__msg" id="verify-msg" role="status" aria-live="polite"></div>
+                                    <input type="hidden" name="verify_token" id="f-verify-token">
+                                </div>
 <div class="cf-group cf-col-6"><label for="f-contact_number">Contact number <span class="cf-req" aria-hidden="true">*</span></label>
                                     <input id="f-contact_number" name="contact_number" type="tel" required autocomplete="tel"  >
                                     <div class="cf-error" data-error-for="contact_number"></div></div>

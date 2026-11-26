@@ -6,13 +6,99 @@ const config = require('../config');
 const sec = require('../security');
 const { Validator, wrap, HttpError } = require('../util');
 const { notify } = require('../services');
-const { sendMail } = require('../mailer');
+const crypto = require('crypto');
+const dns = require('dns').promises;
+const { sendMail, smtpConfigured } = require('../mailer');
 
 const router = express.Router();
 
 const GENERIC_LOGIN_ERROR = 'Incorrect email or password.';
 
 function userPayload(u) { return { id: u.id, name: u.full_name, email: u.email, role: u.role }; }
+
+const DISPOSABLE = new Set(['mailinator.com', 'guerrillamail.com', 'guerrillamail.net', '10minutemail.com', 'tempmail.com', 'temp-mail.org', 'yopmail.com',
+  'trashmail.com', 'sharklasers.com', 'getnada.com', 'dispostable.com', 'throwawaymail.com', 'maildrop.cc', 'fakeinbox.com', 'mailnesia.com', 'mohmal.com', 'tempail.com']);
+const OTP_MINUTES = 10;
+const OTP_MAX_ATTEMPTS = 5;
+const codeHash = (email, code) => sec.sha256(`${email}:${code}`);
+
+/** Rejects addresses that cannot receive mail: disposable providers and domains without mail servers. */
+async function assertDeliverableDomain(email) {
+  const domain = email.split('@')[1];
+  const bad = (msg) => new HttpError(422, msg, { email: msg });
+  if (DISPOSABLE.has(domain)) throw bad('Temporary or disposable email addresses are not accepted. Use your real email address.');
+  if (!config.verifyMx) return;
+  try {
+    const mx = await dns.resolveMx(domain);
+    if (mx && mx.length) return;
+  } catch (e) {
+    if (!['ENOTFOUND', 'ENODATA'].includes(e.code)) return; // DNS temporarily unavailable: the code e-mail will decide
+  }
+  try {
+    const a = await dns.resolve4(domain);
+    if (a && a.length) return;
+  } catch (_) { /* fall through */ }
+  throw bad('This email domain cannot receive email. Check the spelling of your address.');
+}
+
+function requireMailService() {
+  if (!smtpConfigured() && config.isProd) {
+    throw new HttpError(503, 'Email service is not configured on this server yet, so verification emails cannot be sent. Please contact the administrator.');
+  }
+}
+
+// Step 1 of registration: e-mail a 6-digit code to the address the student typed.
+router.post('/student/register/send-code', sec.rateLimit('otp-send', 10, 3600), wrap(async (req, res) => {
+  const v = new Validator(req.body).email('email').done();
+  requireMailService();
+  if (db.get('SELECT 1 AS x FROM users WHERE email = ?', v.email)) {
+    throw new HttpError(409, 'An account with this email address already exists. Please log in or reset your password.', { email: 'An account with this email address already exists.' });
+  }
+  const last = db.get("SELECT created_at FROM email_verifications WHERE email = ? AND created_at > datetime('now','-60 seconds') ORDER BY id DESC LIMIT 1", v.email);
+  if (last) throw new HttpError(429, 'A code was sent a moment ago. Please wait a minute before requesting another.', { email: 'Please wait a minute before requesting another code.' });
+  await assertDeliverableDomain(v.email);
+  const code = String(crypto.randomInt(100000, 1000000));
+  db.transaction(() => {
+    db.run('DELETE FROM email_verifications WHERE email = ?', v.email);
+    db.run('INSERT INTO email_verifications (email, code_hash, expires_at) VALUES (?,?,?)',
+      v.email, codeHash(v.email, code), sec.sqlDate(new Date(Date.now() + OTP_MINUTES * 60 * 1000)));
+  });
+  try {
+    await sendMail({
+      to: v.email,
+      subject: `${code} is your Cuatro Tech Solutions verification code`,
+      text: `Your verification code is ${code}\n\nEnter it on the registration page to confirm this email address. The code is valid for ${OTP_MINUTES} minutes.\n\nIf you did not request this, you can ignore this message.`
+    });
+  } catch (e) {
+    db.run('DELETE FROM email_verifications WHERE email = ?', v.email);
+    console.error('Verification mail failed:', e.message);
+    throw new HttpError(502, 'We could not send an email to that address. Check that it is correct and try again.', { email: 'We could not send an email to this address.' });
+  }
+  res.json({ ok: true, message: `A 6-digit code has been sent to ${v.email}. It is valid for ${OTP_MINUTES} minutes.` });
+}));
+
+// Step 2: check the code. On success the browser receives a one-time token that registration requires.
+router.post('/student/register/verify-code', sec.rateLimit('otp-verify', 30, 3600), wrap(async (req, res) => {
+  const v = new Validator(req.body).email('email').done();
+  const code = String((req.body && req.body.code) || '').replace(/\s+/g, '');
+  if (!/^\d{6}$/.test(code)) throw new HttpError(422, 'Enter the 6-digit code from the email.', { code: 'Enter the 6-digit code from the email.' });
+  const row = db.get("SELECT * FROM email_verifications WHERE email = ? AND consumed_at IS NULL ORDER BY id DESC LIMIT 1", v.email);
+  if (!row || row.expires_at <= sec.sqlDate(new Date())) {
+    throw new HttpError(400, 'This code has expired or was not requested. Please request a new code.', { code: 'Code expired. Request a new one.' });
+  }
+  if (row.attempts >= OTP_MAX_ATTEMPTS) {
+    throw new HttpError(429, 'Too many wrong attempts. Please request a new code.', { code: 'Too many attempts. Request a new code.' });
+  }
+  const given = Buffer.from(codeHash(v.email, code));
+  const want = Buffer.from(row.code_hash);
+  if (!crypto.timingSafeEqual(given, want)) {
+    db.run('UPDATE email_verifications SET attempts = attempts + 1 WHERE id = ?', row.id);
+    throw new HttpError(400, 'That code is not correct.', { code: 'Incorrect code.' });
+  }
+  const token = sec.randomToken(32);
+  db.run("UPDATE email_verifications SET verified_at = datetime('now'), token_hash = ? WHERE id = ?", sec.sha256(token), row.id);
+  res.json({ ok: true, verifyToken: token, message: 'Email verified. You can now complete your registration.' });
+}));
 
 router.post('/student/register', sec.rateLimit('register', 10, 3600), wrap(async (req, res) => {
   const val = new Validator(req.body)
@@ -36,6 +122,9 @@ router.post('/student/register', sec.rateLimit('register', 10, 3600), wrap(async
   if (db.get('SELECT 1 AS x FROM users WHERE email = ?', v.email)) {
     throw new HttpError(409, 'An account with this email address already exists.', { email: 'An account with this email address already exists.' });
   }
+  const ver = req.body.verify_token ? db.get("SELECT * FROM email_verifications WHERE token_hash = ? AND email = ? AND consumed_at IS NULL AND verified_at > datetime('now','-30 minutes')", sec.sha256(String(req.body.verify_token)), v.email) : null;
+  if (!ver) throw new HttpError(422, 'Please verify your email address with the code we send you before creating the account.', { email: 'Verify this email address first.' });
+
   const hash = await sec.hashPassword(pw);
   let user;
   try {
@@ -49,6 +138,7 @@ router.post('/student/register', sec.rateLimit('register', 10, 3600), wrap(async
         uid, v.college, v.degree, v.specialisation, v.graduation_year, v.skills, v.experience, v.location);
       notify(Number(p.lastInsertRowid), 'Registration completed',
         'Welcome to the Cuatro Student Portal. Upload your resume to receive job recommendations.', '/student-portal/resume');
+      db.run("UPDATE email_verifications SET consumed_at = datetime('now') WHERE id = ?", ver.id);
       return db.get('SELECT * FROM users WHERE id = ?', uid);
     });
   } catch (e) {
@@ -91,6 +181,7 @@ router.post('/logout', (req, res) => {
 
 router.post('/student/forgot-password', sec.rateLimit('forgot', 5, 3600), wrap(async (req, res) => {
   const v = new Validator(req.body).email('email').done();
+  requireMailService();
   const user = db.get("SELECT * FROM users WHERE email = ? AND role = 'student' AND is_active = 1", v.email);
   if (user) {
     const token = sec.randomToken(32);
@@ -104,7 +195,8 @@ router.post('/student/forgot-password', sec.rateLimit('forgot', 5, 3600), wrap(a
     }).catch((e) => console.error('Reset mail failed:', e.message));
   }
   // identical response whether or not the account exists
-  res.json({ ok: true, message: 'If an account exists for that email address, a password reset link has been sent.' });
+  const devNote = smtpConfigured() ? '' : ' (Development mode: no email service is configured, so the link was printed in the server terminal instead.)';
+  res.json({ ok: true, message: 'If a student account exists for that email address, a password reset link has been sent. Check your inbox and spam folder.' + devNote });
 }));
 
 router.post('/student/reset-password', sec.rateLimit('reset', 10, 3600), wrap(async (req, res) => {

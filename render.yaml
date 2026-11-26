@@ -28,6 +28,12 @@ services:
         value: "true"     # admin login always matches ADMIN_EMAIL / ADMIN_PASSWORD set in Render
       - key: ADMIN_NAME
         value: Cuatro Administrator
+      # --- E-mail (needed for sign-up codes and password reset links) ---
+      # Render free blocks SMTP ports, so use the Brevo HTTP API key here (brevo.com > SMTP & API > API keys).
+      - key: BREVO_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false       # e.g. Cuatro Tech Solutions <your-verified-sender@gmail.com>
     # --- Persistent storage (paid plans only). Uncomment, and also set plan: starter above. ---
     # disk:
     #   name: cuatro-data

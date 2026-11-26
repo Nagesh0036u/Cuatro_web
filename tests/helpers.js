@@ -15,6 +15,8 @@ async function startServer() {
   process.env.NODE_ENV = 'test';
   process.env.ADMIN_EMAIL = '';
   process.env.ADMIN_PASSWORD = '';
+  const config = require('../server/config');
+  if (config.dbPath !== process.env.DATABASE_PATH) throw new Error('Refusing to run tests: server config was loaded before the test database was set (' + config.dbPath + ')');
   const { createApp } = require('../server/app');
   const db = require('../server/db');
   const app = createApp();

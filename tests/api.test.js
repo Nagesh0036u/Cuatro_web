@@ -11,9 +11,25 @@ const ADMIN = { email: 'admin@test.local', password: 'AdminPass123!' };
 
 async function newClient() { const c = new Client(ctx.base); await c.init(); return c; }
 
+// loaded lazily: requiring server modules before startServer() would bind config to the real database
+const mailbox = () => require('../server/mailer').outbox;
+/** Runs the real e-mail verification: request a code, read it from the captured mail, verify it. */
+async function verifyEmail(c, email) {
+  const s = await c.post('/api/auth/student/register/send-code', { email });
+  assert.equal(s.status, 200, JSON.stringify(s.json));
+  const mail = mailbox()[mailbox().length - 1];
+  assert.equal(mail.to, email.toLowerCase());
+  const code = /\b(\d{6})\b/.exec(mail.text)[1];
+  const v = await c.post('/api/auth/student/register/verify-code', { email, code });
+  assert.equal(v.status, 200, JSON.stringify(v.json));
+  return v.json.verifyToken;
+}
+
 async function registerStudent(name, email) {
   const c = await newClient();
+  const verify_token = await verifyEmail(c, email);
   const r = await c.post('/api/auth/student/register', {
+    verify_token,
     full_name: name, email, contact_number: '+91 9876543210', password: 'Student123', confirm_password: 'Student123',
     college: 'Test University', degree: "Bachelor's degree", specialisation: 'Computer Science', graduation_year: 2025,
     skills: 'Python, SQL', location: 'Bengaluru'
@@ -130,6 +146,46 @@ describe('admin job management', () => {
     assert.equal((await admin.post(`/api/admin/jobs/${id}/status`, { action: 'publish' })).status, 200);
     assert.equal((await admin.post(`/api/admin/jobs/${id}/status`, { action: 'unpublish' })).status, 200);
     assert.equal((await admin.del(`/api/admin/jobs/${id}`)).status, 200);
+  });
+});
+
+describe('email verification at registration', () => {
+  const body = (email, extra = {}) => ({ full_name: 'Carol Das', email, contact_number: '9876543210', password: 'Student123', confirm_password: 'Student123', graduation_year: 2025, ...extra });
+  test('registration without a verified email is refused', async () => {
+    const c = await newClient();
+    const r = await c.post('/api/auth/student/register', body('carol@test.local'));
+    assert.equal(r.status, 422);
+    assert.ok(r.json.fields.email);
+  });
+  test('wrong code is rejected and locks after 5 attempts', async () => {
+    const c = await newClient();
+    assert.equal((await c.post('/api/auth/student/register/send-code', { email: 'dave@test.local' })).status, 200);
+    const real = /\b(\d{6})\b/.exec(mailbox()[mailbox().length - 1].text)[1];
+    const wrong = real === '111111' ? '222222' : '111111';
+    for (let i = 0; i < 5; i++) assert.equal((await c.post('/api/auth/student/register/verify-code', { email: 'dave@test.local', code: wrong })).status, 400);
+    assert.equal((await c.post('/api/auth/student/register/verify-code', { email: 'dave@test.local', code: real })).status, 429);
+  });
+  test('code cannot be requested for a bad, disposable or already registered address', async () => {
+    const c = await newClient();
+    assert.equal((await c.post('/api/auth/student/register/send-code', { email: 'not-an-email' })).status, 422);
+    assert.equal((await c.post('/api/auth/student/register/send-code', { email: 'x@mailinator.com' })).status, 422);
+    assert.equal((await c.post('/api/auth/student/register/send-code', { email: 'alice@test.local' })).status, 409);
+  });
+  test('token only works for the verified email and only once', async () => {
+    const c = await newClient();
+    const token = await verifyEmail(c, 'erin@test.local');
+    assert.equal((await c.post('/api/auth/student/register', body('someone-else@test.local', { verify_token: token }))).status, 422);
+    assert.equal((await c.post('/api/auth/student/register', body('erin@test.local', { verify_token: token }))).status, 201);
+    const c2 = await newClient();
+    assert.equal((await c2.post('/api/auth/student/register', body('erin@test.local', { verify_token: token }))).status, 409);
+    ctx.db.run('DELETE FROM users WHERE email = ?', 'erin@test.local'); // keep later student counts unchanged
+  });
+  test('a code is single use and a new request replaces the old one', async () => {
+    const c = await newClient();
+    await c.post('/api/auth/student/register/send-code', { email: 'finn@test.local' });
+    const first = /\b(\d{6})\b/.exec(mailbox()[mailbox().length - 1].text)[1];
+    ctx.db.run('DELETE FROM email_verifications WHERE email = ?', 'finn@test.local');
+    assert.equal((await c.post('/api/auth/student/register/verify-code', { email: 'finn@test.local', code: first })).status, 400);
   });
 });
 

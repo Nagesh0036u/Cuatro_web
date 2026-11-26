@@ -13,7 +13,64 @@
   });
 
   CT.on('student-register', () => {
-    CT.bindForm(document.getElementById('register-form'), (v) => {
+    const form = document.getElementById('register-form');
+    const email = document.getElementById('f-email');
+    const codeRow = document.getElementById('code-row');
+    const code = document.getElementById('f-code');
+    const tokenInput = document.getElementById('f-verify-token');
+    const msg = document.getElementById('verify-msg');
+    const sendBtn = document.getElementById('send-code');
+    const verifyBtn = document.getElementById('verify-code');
+    let verifiedEmail = '';
+    let cooldown = null;
+    const say = (text, ok) => { msg.textContent = text; msg.className = 'cx-verify__msg ' + (ok ? 'ok' : 'err'); };
+    const fieldErr = (name, text) => { const h = form.querySelector('[data-error-for="' + name + '"]'); if (h) h.textContent = text || ''; };
+    const startCooldown = () => {
+      let s = 60; sendBtn.disabled = true;
+      clearInterval(cooldown);
+      cooldown = setInterval(() => {
+        s -= 1; sendBtn.querySelector('span').textContent = s > 0 ? 'Resend in ' + s + 's' : 'Resend Code';
+        if (s <= 0) { clearInterval(cooldown); sendBtn.disabled = false; }
+      }, 1000);
+    };
+    // changing the address after verification cancels it
+    email.addEventListener('input', () => {
+      if (verifiedEmail && email.value.trim().toLowerCase() !== verifiedEmail) {
+        verifiedEmail = ''; tokenInput.value = ''; email.readOnly = false;
+        form.classList.remove('cx-verified'); say('Email changed. Please verify the new address.', false);
+      }
+    });
+    sendBtn.addEventListener('click', () => {
+      fieldErr('email'); fieldErr('code');
+      const addr = email.value.trim();
+      if (!email.checkValidity() || !addr) { fieldErr('email', 'Enter a valid email address.'); email.focus(); return; }
+      sendBtn.disabled = true; say('Sending code...', true);
+      CT.api('POST', '/api/auth/student/register/send-code', { email: addr }).then((res) => {
+        say(res.message, true); codeRow.hidden = false; code.value = ''; code.focus(); startCooldown();
+      }).catch((err) => {
+        sendBtn.disabled = false; say(err.message, false);
+        if (err.fields && err.fields.email) fieldErr('email', err.fields.email);
+      });
+    });
+    const doVerify = () => {
+      fieldErr('code');
+      const c = code.value.replace(/\s+/g, '');
+      if (!/^\d{6}$/.test(c)) { fieldErr('code', 'Enter the 6-digit code from the email.'); code.focus(); return; }
+      verifyBtn.disabled = true;
+      CT.api('POST', '/api/auth/student/register/verify-code', { email: email.value.trim(), code: c }).then((res) => {
+        tokenInput.value = res.verifyToken; verifiedEmail = email.value.trim().toLowerCase();
+        email.readOnly = true; codeRow.hidden = true; clearInterval(cooldown);
+        sendBtn.disabled = true; sendBtn.querySelector('span').textContent = 'Verified';
+        form.classList.add('cx-verified'); fieldErr('email'); const st = form.querySelector('.cf-status'); if (st) { st.textContent = ''; st.className = 'cf-status'; } say('Email verified. Complete the form below to create your account.', true);
+      }).catch((err) => { say(err.message, false); if (err.fields && err.fields.code) fieldErr('code', err.fields.code); })
+        .then(() => { verifyBtn.disabled = false; });
+    };
+    verifyBtn.addEventListener('click', doVerify);
+    code.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); doVerify(); } });
+
+    CT.bindForm(form, (v) => {
+      delete v.code;
+      if (!v.verify_token) { const err = new Error('Please verify your email address first.'); err.fields = { email: 'Click "Send Code" and enter the code from your email.' }; throw err; }
       if (!v.terms) { const err = new Error('Please correct the highlighted fields.'); err.fields = { terms: 'Please accept to continue.' }; throw err; }
       delete v.terms;
       return CT.api('POST', '/api/auth/student/register', v);
