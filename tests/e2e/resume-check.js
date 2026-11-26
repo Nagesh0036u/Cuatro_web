@@ -1,7 +1,7 @@
 'use strict';
 /**
  * Browser check for the Resume Builder (server must be running with a fresh database).
- * Usage: node tests/e2e/resume-check.js [baseUrl]
+ * Usage: node tests/e2e/resume-check.js [baseUrl] [serverLogFile]   (server without a mail service; the sign-up code is read from the log)
  * Registers a student, fills one resume per template, screenshots every preview, prints to PDF and checks the PDF text.
  */
 const fs = require('fs');
@@ -46,14 +46,19 @@ const TEMPLATES = ['chronological', 'functional', 'combination', 'mini', 'target
   page.on('console', (m) => { if (m.type() === 'error' && !/favicon|fonts\.g|cuatro-(logo|icon)/.test(m.text())) errs.push(m.text()); });
 
   await page.goto(`${BASE}/student-portal/register`, { waitUntil: 'networkidle' });
-  const email = `rb.${Date.now()}@example.com`;
-  const reg = await page.evaluate(async (em) => {
+  const email = `rb.${Date.now()}@gmail.com`;
+  await page.evaluate((em) => window.CT.api('POST', '/api/auth/student/register/send-code', { email: em }), email);
+  await new Promise((r) => setTimeout(r, 400));
+  const logBuf = fs.readFileSync(process.argv[3]); const logTxt = logBuf.includes(0) ? logBuf.toString('utf16le') : logBuf.toString('utf8');
+  const otp = [...logTxt.matchAll(new RegExp('To: ' + email.replace(/\./g, '\\.') + '\\r?\\nSubject: (\\d{6})', 'g'))].pop()[1];
+  const verifyToken = (await page.evaluate(([em, code]) => window.CT.api('POST', '/api/auth/student/register/verify-code', { email: em, code }), [email, otp])).verifyToken;
+  const reg = await page.evaluate(async ([em, verify_token]) => {
     try {
-      const r = await window.CT.api('POST', '/api/auth/student/register', { full_name: 'Nagesh R', email: em, contact_number: '+91 9876543210', password: 'Student1234', confirm_password: 'Student1234', graduation_year: 2025, degree: 'B.Tech', specialisation: 'Computer Science', college: 'Sample Institute', skills: 'Python, SQL' });
+      const r = await window.CT.api('POST', '/api/auth/student/register', { verify_token, full_name: 'Nagesh R', email: em, contact_number: '+91 9876543210', password: 'Student1234', confirm_password: 'Student1234', graduation_year: 2025, degree: 'B.Tech', specialisation: 'Computer Science', college: 'Sample Institute', skills: 'Python, SQL' });
       window.CT.setCsrf(r.csrfToken);
       return 'ok';
     } catch (e) { return e.message; }
-  }, email);
+  }, [email, verifyToken]);
   check(reg === 'ok', `student registered (${reg})`);
 
   const ids = [];

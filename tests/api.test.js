@@ -416,6 +416,11 @@ describe('applications and tracking', () => {
     assert.ok(notes.json.notifications.some((n) => n.title === 'Application submitted'));
     assert.ok(notes.json.notifications.some((n) => n.title === 'Resume uploaded'));
     assert.ok(notes.json.notifications.some((n) => n.title === 'Registration completed'));
+    await new Promise((r) => setTimeout(r, 50)); // e-mails are sent after the transaction
+    const mails = mailbox();
+    assert.ok(mails.some((m) => m.to === 'alice@test.local' && /Application submitted/.test(m.subject) && m.text.includes(code)), 'student gets a confirmation email');
+    assert.ok(mails.some((m) => /\[New application\]/.test(m.subject) && m.text.includes(code) && m.text.includes('/admin-portal/application?id=')), 'HR gets a new-application email');
+    assert.ok(!mails.some((m) => m.to === 'alice@test.local' && /Resume uploaded/.test(m.subject)), 'resume uploads are portal-only');
   });
 
   test("Student B cannot see Student A's application, resume or notifications", async () => {
@@ -462,6 +467,10 @@ describe('applications and tracking', () => {
     assert.equal(detail.json.history[1].previous_status, 'Application Submitted');
     assert.equal(detail.json.history[1].message, 'We are reviewing your profile.');
     assert.ok(detail.json.application.interview_details.includes('Video call'));
+    await new Promise((r) => setTimeout(r, 50));
+    const ivMail = mailbox().filter((m) => m.to === 'alice@test.local' && /Interview scheduled/.test(m.subject)).pop();
+    assert.ok(ivMail && ivMail.text.includes('Video call link will be emailed.') && ivMail.text.includes(code), 'student is e-mailed interview details');
+    assert.ok(!ivMail.text.includes('CONFIDENTIAL'));
 
     const raw = JSON.stringify(detail.json);
     assert.ok(!raw.includes('CONFIDENTIAL'), 'internal notes must never reach students');

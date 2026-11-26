@@ -6,7 +6,7 @@ let transporter = null;
 const outbox = []; // captured messages when no mail service is configured (non-production only; used by tests)
 
 const brevoKey = () => process.env.BREVO_API_KEY || '';
-/** True when real e-mail can be sent: Brevo HTTP API (works on hosts that block SMTP, e.g. Render free) or SMTP. */
+/** True when real e-mail can be sent: Brevo HTTP API (for hosts that block SMTP) or SMTP. */
 const smtpConfigured = () => !!(brevoKey() || config.smtp.host);
 
 function getTransport() {

@@ -36,6 +36,25 @@ npm start                   # http://localhost:3000
 Set `SEED_DEMO_JOBS=false` in `.env` before `npm run setup` if you do not want demonstration jobs.
 Demonstration jobs are labelled "Demonstration listing" on the public site; delete them in the Admin Portal when real vacancies are added.
 
+## Running on your computer (complete process)
+
+```powershell
+npm install            # first time only
+npm run setup-email    # first time only: connect Gmail so codes / reset links / updates reach inboxes
+npm start              # then open http://localhost:3001  (PORT in .env)
+```
+
+Stop with Ctrl+C. If `npm start` says `EADDRINUSE`, the site is already running in another terminal:
+use that one, or run `Stop-Process -Name node -Force` and start again.
+
+1. **Student signs up** at `/student-portal/register`: Send Code > enter the 6-digit code from the email > fill the form > Create Account.
+2. **Profile and resume**: upload a PDF/DOCX/TXT or build one in Resume Builder and choose *Use for job matching*.
+3. **Find Jobs** shows match percentages; **Apply** gives an application ID and sends a confirmation email.
+4. **HR** opens `/admin-portal/login` (admin from `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`, or `npm run create-admin`),
+   adds jobs, reviews applications, downloads resumes, changes status / schedules interviews.
+5. **Student** gets an email and a portal notification for each update and sees the timeline in *My Applications*.
+6. **Forgot password**: on the login page type the email and click *Forgot password?*; the reset link arrives by email.
+
 ## Where things are
 
 | Area | URL |
@@ -111,12 +130,14 @@ E-mail is required for two student flows:
 * **Forgot password.** On the login page the student types their email and clicks *Forgot password?*; a single-use reset link (30 minutes) is e-mailed to that account's address (unknown addresses get no email). After resetting, the old password
   stops working, all sessions are signed out, and the student logs in with the new password.
 
-Configure one mail service: run `npm run setup-email` (asks for Gmail + App Password or a Brevo key, sends a test email, saves `.env`), or set it by hand in `.env` / the Render dashboard:
+Students are also e-mailed when they apply and whenever HR changes the status of their application
+(with interview details and next step). HR (`CONTACT_INBOX`) is e-mailed for every new application and contact message.
 
-* **Brevo HTTP API** (`BREVO_API_KEY`): works on Render free, which blocks SMTP ports. Create a free
-  brevo.com account, verify your sender address, create an API key, and set `MAIL_FROM` to that sender.
-* **SMTP** (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`), e.g. Gmail:
-  `smtp.gmail.com`, port `465`, `SMTP_SECURE=true`, your Gmail address and a Google *App Password*.
+Connect Gmail once with `npm run setup-email`: it asks for the Gmail address and a Google *App Password*
+(https://myaccount.google.com/apppasswords, needs 2-Step Verification), sends a test email and saves the
+`SMTP_*` settings in `.env`. The server prints `Email: ON` or `Email: OFF` when it starts.
+Option 2 in the same command uses a Brevo API key (`BREVO_API_KEY`) instead of SMTP, useful later if the
+hosting provider blocks SMTP ports.
 
 Without a mail service, codes and links are printed in the server terminal (development only). In production,
 sign-up and password reset are refused with a clear message until e-mail is configured.

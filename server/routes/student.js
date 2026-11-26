@@ -12,7 +12,7 @@ const matching = require('../matching');
 const { extractSkills } = require('../skills');
 const { detectType, extractText } = require('../resumeParser');
 const { Validator, wrap, HttpError, iso } = require('../util');
-const { JOB_SELECT, jobView, isAccepting, notify, newApplicationCode, STATUS_INFO, todayStr } = require('../services');
+const { JOB_SELECT, jobView, isAccepting, notify, notifyHr, newApplicationCode, STATUS_INFO, todayStr } = require('../services');
 
 const router = express.Router();
 router.use(sec.requireStudent);
@@ -203,7 +203,7 @@ router.post('/resume', (req, res, next) => {
         `INSERT INTO resumes (student_id, stored_name, original_name, file_type, file_size, extracted_text, extracted_skills, is_current, status)
          VALUES (?,?,?,?,?,?,?,1,?)`,
         p.id, stored, safeName, detected.type, req.file.size, text, JSON.stringify(skills), status);
-      notify(p.id, 'Resume uploaded', `Your resume "${safeName}" was uploaded${skills.length ? ` and ${skills.length} skills were detected` : ''}.`, '/student-portal/find-jobs');
+      notify(p.id, 'Resume uploaded', `Your resume "${safeName}" was uploaded${skills.length ? ` and ${skills.length} skills were detected` : ''}.`, '/student-portal/find-jobs', { email: false });
     });
   } catch (e) {
     fs.rmSync(target, { force: true });
@@ -310,6 +310,8 @@ router.post('/applications', wrap((req, res) => {
     if (/UNIQUE/i.test(e.message)) throw new HttpError(409, 'You have already applied for this job.');
     throw e;
   }
+  notifyHr(`[New application] ${job.title} - ${v.applicant_name} (${code})`,
+    `A new application was submitted.\n\nJob: ${job.title}\nApplicant: ${v.applicant_name}\nEmail: ${v.applicant_email}\nPhone: ${v.applicant_phone}\nMatch score: ${score === null ? 'n/a' : score + '%'}\nApplication ID: ${code}\n\nReview it in the Admin Portal:\n${config.siteUrl}/admin-portal/application?id=${encodeURIComponent(code)}`);
   res.status(201).json({ ok: true, application_id: code, job_title: job.title, applied_at: new Date().toISOString() });
 }));
 

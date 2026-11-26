@@ -2,8 +2,8 @@
 /**
  * Interactive e-mail setup: npm run setup-email
  * Connects the site to a real mail service so verification codes and password reset links reach inboxes.
- *   1) Gmail (SMTP + Google App Password)  - for running on your own computer or paid hosting
- *   2) Brevo HTTP API key                   - for Render free (Render blocks SMTP ports)
+ *   1) Gmail (SMTP + Google App Password)  - recommended
+ *   2) Brevo HTTP API key                   - alternative for hosting providers that block SMTP ports
  * The details are tested by sending a real test e-mail, then written to .env (never committed).
  */
 const fs = require('fs');
@@ -57,7 +57,7 @@ async function gmail() {
 }
 
 async function brevo() {
-  console.log('\nBrevo (free, works on Render):');
+  console.log('\nBrevo (free email API):');
   console.log('  1. Sign up at https://www.brevo.com');
   console.log('  2. Senders & IP > Senders: add and verify the email address that will send (e.g. your Gmail).');
   console.log('  3. SMTP & API > API keys: create a key and copy it.\n');
@@ -74,7 +74,6 @@ async function brevo() {
   if (!r.ok) throw new Error(`Brevo could not send (HTTP ${r.status}): ${(await r.text()).slice(0, 300)}. Is the sender verified in Brevo?`);
   writeEnv({ BREVO_API_KEY: key, MAIL_FROM: `Cuatro Tech Solutions <${sender}>` });
   console.log(`\nTest email sent to ${to}. Check the inbox (and spam folder).`);
-  console.log('For Render: add BREVO_API_KEY and MAIL_FROM with the same values in the Render dashboard > Environment.');
 }
 
 (async () => {

@@ -334,8 +334,13 @@ router.post('/applications/:code/status', wrap((req, res) => {
       v.status === 'Interview Scheduled' ? v.interview_details : a.interview_details, a.id);
     db.run('INSERT INTO application_status_history (application_id, previous_status, new_status, candidate_message, changed_by) VALUES (?,?,?,?,?)',
       a.id, a.current_status, v.status, message, req.user.id);
+    const extra = [
+      v.status === 'Interview Scheduled' && v.interview_details ? `Interview details: ${v.interview_details}` : '',
+      next ? `Next step: ${next}` : '',
+      `Application ID: ${a.application_code}`
+    ].filter(Boolean).join('\n');
     notify(a.student_id, isUpdate ? 'Interview updated' : info.title, message,
-      `/student-portal/application-details?id=${encodeURIComponent(a.application_code)}`);
+      `/student-portal/application-details?id=${encodeURIComponent(a.application_code)}`, { extra });
     sec.audit(req, 'application.status', 'application', a.application_code, { from: a.current_status, to: v.status });
   });
   res.json({ ok: true });

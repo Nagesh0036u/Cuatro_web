@@ -59,8 +59,38 @@ function jobView(j, { detail = false } = {}) {
   return view;
 }
 
-function notify(studentId, title, message, link) {
-  db.run('INSERT INTO notifications (student_id, title, message, link) VALUES (?,?,?,?)', studentId, title, message, link || null);
+/**
+ * Creates a portal notification and (unless opts.email === false) e-mails the same update to the student.
+ * The e-mail is sent after the current transaction finishes and only if the notification row still exists,
+ * so a rolled-back operation never produces an e-mail.
+ */
+function notify(studentId, title, message, link, opts = {}) {
+  const r = db.run('INSERT INTO notifications (student_id, title, message, link) VALUES (?,?,?,?)', studentId, title, message, link || null);
+  if (opts.email === false) return;
+  const id = Number(r.lastInsertRowid);
+  setImmediate(() => {
+    try {
+      if (!db.get('SELECT 1 AS x FROM notifications WHERE id = ?', id)) return;
+      const u = db.get('SELECT u.email, u.full_name FROM student_profiles p JOIN users u ON u.id = p.user_id WHERE p.id = ?', studentId);
+      if (!u) return;
+      const config = require('./config');
+      const { sendMail } = require('./mailer');
+      const url = link ? `${config.siteUrl}${link}` : `${config.siteUrl}/student-portal/dashboard`;
+      const extra = opts.extra ? `\n\n${opts.extra}` : '';
+      sendMail({
+        to: u.email,
+        subject: `${title} - Cuatro Tech Solutions`,
+        text: `Hello ${u.full_name},\n\n${message}${extra}\n\nView it in your Student Portal:\n${url}\n\nCuatro Tech Solutions`
+      }).catch((e) => console.error('Notification mail failed:', e.message));
+    } catch (e) { console.error('Notification mail failed:', e.message); }
+  });
+}
+
+/** E-mails the recruitment inbox (CONTACT_INBOX). Never throws. */
+function notifyHr(subject, text) {
+  const config = require('./config');
+  const { sendMail } = require('./mailer');
+  sendMail({ to: config.contactInbox, subject, text }).catch((e) => console.error('HR mail failed:', e.message));
 }
 
 function newApplicationCode() {
@@ -123,4 +153,4 @@ const STATUS_INFO = {
   }
 };
 
-module.exports = { JOB_SELECT, jobView, isAccepting, notify, newApplicationCode, STATUS_INFO, todayStr, salaryLabel };
+module.exports = { JOB_SELECT, jobView, isAccepting, notify, notifyHr, newApplicationCode, STATUS_INFO, todayStr, salaryLabel };

@@ -107,7 +107,7 @@ router.post('/documents/:id/use-for-matching', wrap((req, res) => {
         `INSERT INTO resumes (student_id, stored_name, original_name, file_type, file_size, extracted_text, extracted_skills, is_current, status)
          VALUES (?,?,?,?,?,?,?,1,'Processed')`,
         p.id, stored, name, 'txt', Buffer.byteLength(body), body, JSON.stringify(skills));
-      notify(p.id, 'Resume updated', `Your resume "${r.title}" from Resume Builder is now your current resume${skills.length ? ` (${skills.length} skills detected)` : ''}.`, '/student-portal/find-jobs');
+      notify(p.id, 'Resume updated', `Your resume "${r.title}" from Resume Builder is now your current resume${skills.length ? ` (${skills.length} skills detected)` : ''}.`, '/student-portal/find-jobs', { email: false });
     });
   } catch (e) {
     fs.rmSync(target, { force: true });

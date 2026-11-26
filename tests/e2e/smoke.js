@@ -2,7 +2,9 @@
 
 /**
  * Browser smoke test (Playwright + installed Microsoft Edge / Chrome).
- * Usage: node tests/e2e/smoke.js [baseUrl]    (server must already be running with demo data)
+ * Usage: node tests/e2e/smoke.js [baseUrl] [serverLogFile]
+ *   server must already be running with demo data and WITHOUT a mail service, its output going to serverLogFile
+ *   (the sign-up verification code is read from that log).
  * Walks every public page, checks console/CSP/network errors, horizontal overflow at 3 viewports,
  * and runs the student + admin journey through the real UI.
  */
@@ -11,6 +13,16 @@ const path = require('path');
 const { chromium } = require('playwright-core');
 
 const BASE = process.argv[2] || 'http://localhost:3100';
+const LOG = process.argv[3];
+async function codeFromLog(email) {
+  for (let i = 0; i < 20; i++) {
+    const buf = fs.readFileSync(LOG); const txt = buf.includes(0) ? buf.toString('utf16le') : buf.toString('utf8');
+    const m = [...txt.matchAll(new RegExp('To: ' + email.replace(/[.+]/g, '\\$&') + '\\r?\\nSubject: (\\d{6}) is your', 'g'))];
+    if (m.length) return m[m.length - 1][1];
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error('verification code not found in ' + LOG);
+}
 const OUT = path.join(__dirname, 'screens');
 fs.mkdirSync(OUT, { recursive: true });
 const ADMIN = { email: process.env.QA_ADMIN_EMAIL || 'qa-admin@example.com', password: process.env.QA_ADMIN_PASSWORD || 'QaAdminPass2026' };
@@ -101,9 +113,15 @@ async function overflow(page) {
   await page.click('a:has-text("Create a student account")');
   await page.waitForSelector('#register-form');
   const stamp = Date.now();
-  const email = `ui.student.${stamp}@example.com`;
+  const email = `ui.student.${stamp}@gmail.com`;
   await page.fill('#f-full_name', 'UI Student');
   await page.fill('#f-email', email);
+  await page.click('#send-code');
+  await page.waitForSelector('#code-row:not([hidden])');
+  await page.fill('#f-code', await codeFromLog(email));
+  await page.click('#verify-code');
+  await page.waitForSelector('.cx-verified');
+  check(true, 'email verified with the code from the email');
   await page.fill('#f-contact_number', '+91 9876501234');
   await page.fill('#f-password', 'Student1234');
   await page.fill('#f-confirm_password', 'Student1234');
