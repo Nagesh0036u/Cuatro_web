@@ -1391,7 +1391,7 @@ function buildPortals() {
       fields: `${field({ name: 'email', label: 'Email address', type: 'email', required: true, autocomplete: 'email' })}
 ${field({ name: 'password', label: 'Password', type: 'password', required: true, autocomplete: 'current-password' })}`
     },
-    footerLinks: '<a href="/student-portal/forgot-password">Forgot password?</a> <span>&middot;</span> <a href="/student-portal/register">Create a student account</a>'
+    footerLinks: '<a href="/student-portal/forgot-password" id="forgot-link">Forgot password?</a> <span>&middot;</span> <a href="/student-portal/register">Create a student account</a>'
   });
   authPage({
     area: 'student', file: 'register', title: 'Student Registration', dataPage: 'register',
@@ -1427,7 +1427,7 @@ ${field({ name: 'skills', label: 'Skills', col: 'cf-col-12', placeholder: 'Comma
   });
   authPage({
     area: 'student', file: 'forgot-password', title: 'Forgot Password', dataPage: 'forgot',
-    intro: 'Enter your account email and we will send a password reset link if the account exists.',
+    intro: 'Enter the email of your student account. We will email you a link to set a new password.',
     form: { id: 'forgot-form', button: 'Send Reset Link', fields: field({ name: 'email', label: 'Email address', type: 'email', required: true, autocomplete: 'email' }) },
     footerLinks: '<a href="/student-portal/login">Back to login</a>'
   });

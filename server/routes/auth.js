@@ -179,26 +179,36 @@ router.post('/logout', (req, res) => {
   res.json({ ok: true, csrfToken: s.csrf_token });
 });
 
-router.post('/student/forgot-password', sec.rateLimit('forgot', 5, 3600), wrap(async (req, res) => {
+router.post('/student/forgot-password', sec.rateLimit('forgot', 10, 3600), wrap(async (req, res) => {
   const v = new Validator(req.body).email('email').done();
   requireMailService();
   const user = db.get("SELECT * FROM users WHERE email = ? AND role = 'student' AND is_active = 1", v.email);
-  if (user) {
-    const token = sec.randomToken(32);
-    const expires = sec.sqlDate(new Date(Date.now() + 30 * 60 * 1000));
-    db.run('INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?,?,?)', user.id, sec.sha256(token), expires);
-    const link = `${config.siteUrl}/student-portal/reset-password?token=${token}`;
-    sendMail({
+  if (!user) {
+    throw new HttpError(404, 'No student account is registered with this email address.', { email: 'No student account uses this email.' });
+  }
+  const recent = db.get("SELECT 1 AS x FROM password_resets WHERE user_id = ? AND created_at > datetime('now','-60 seconds')", user.id);
+  if (recent) throw new HttpError(429, 'A reset link was sent less than a minute ago. Please check your inbox and spam folder.');
+  const token = sec.randomToken(32);
+  const expires = sec.sqlDate(new Date(Date.now() + 30 * 60 * 1000));
+  db.run('UPDATE password_resets SET used_at = datetime(\'now\') WHERE user_id = ? AND used_at IS NULL', user.id); // only the newest link works
+  const row = db.run('INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?,?,?)', user.id, sec.sha256(token), expires);
+  const link = `${config.siteUrl}/student-portal/reset-password?token=${token}`;
+  try {
+    await sendMail({
       to: user.email,
       subject: 'Reset your Cuatro Student Portal password',
-      text: `Hello ${user.full_name},\n\nUse the link below to choose a new password. It is valid for 30 minutes and can be used once.\n\n${link}\n\nIf you did not request this, you can ignore this message.`
-    }).catch((e) => console.error('Reset mail failed:', e.message));
+      text: `Hello ${user.full_name},\n\nWe received a request to reset the password of your Cuatro Student Portal account.\nOpen the link below to choose a new password. It is valid for 30 minutes and can be used once.\n\n${link}\n\nIf you did not request this, you can ignore this email; your password stays the same.\n\nCuatro Tech Solutions`
+    });
+  } catch (e) {
+    db.run('DELETE FROM password_resets WHERE id = ?', Number(row.lastInsertRowid));
+    console.error('Reset mail failed:', e.message);
+    throw new HttpError(502, 'The reset email could not be sent right now. Please try again in a few minutes.');
   }
-  // identical response whether or not the account exists
-  const devNote = smtpConfigured() ? '' : ' (Development mode: no email service is configured, so the link was printed in the server terminal instead.)';
-  res.json({ ok: true, message: 'If a student account exists for that email address, a password reset link has been sent. Check your inbox and spam folder.' + devNote });
+  const [name, domain] = user.email.split('@');
+  const masked = `${name.slice(0, 2)}${'*'.repeat(Math.max(1, name.length - 2))}@${domain}`;
+  const devNote = smtpConfigured() ? '' : ' (Development mode: no email service is configured, so the link was printed in the server terminal instead. Run "npm run setup-email".)';
+  res.json({ ok: true, message: `A password reset link has been sent to ${masked}. Check your inbox and spam folder.${devNote}` });
 }));
-
 router.post('/student/reset-password', sec.rateLimit('reset', 10, 3600), wrap(async (req, res) => {
   const token = String((req.body && req.body.token) || '');
   const pw = req.body && req.body.password;

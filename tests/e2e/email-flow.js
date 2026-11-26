@@ -14,7 +14,7 @@ const problems = [];
 const check = (c, m) => { console.log((c ? '  ok  ' : '  FAIL ') + m); if (!c) problems.push(m); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function lastFromLog(re) {
-  for (let i = 0; i < 20; i++) { const all = [...fs.readFileSync(LOG, 'utf8').matchAll(re)]; if (all.length) return all[all.length - 1][1]; await sleep(250); }
+  for (let i = 0; i < 20; i++) { const buf = fs.readFileSync(LOG); const txt = buf.includes(0) ? buf.toString('utf16le') : buf.toString('utf8'); const all = [...txt.matchAll(re)]; if (all.length) return all[all.length - 1][1]; await sleep(250); }
   return null;
 }
 (async () => {
@@ -60,9 +60,14 @@ async function lastFromLog(re) {
 
   // 5. forgot password -> link -> reset -> login with the new password
   const ctx2 = await browser.newContext(); const p2 = await ctx2.newPage();
-  await p2.goto(BASE + '/student-portal/forgot-password', { waitUntil: 'networkidle' });
-  await p2.fill('#f-email', email); await p2.click('#forgot-form button[type=submit]'); await p2.waitForTimeout(1000);
-  check(/reset link has been sent/i.test(await p2.textContent('#forgot-form .cf-status')), 'forgot password confirms sending');
+  await p2.goto(BASE + '/student-portal/login', { waitUntil: 'networkidle' });
+  await p2.click('#forgot-link'); await p2.waitForTimeout(300);
+  check(/type your account email/i.test(await p2.textContent('[data-error-for=email]')), 'forgot with empty email asks for the account email');
+  check(/\/login/.test(p2.url()), 'forgot link stays on the login page');
+  await p2.fill('#f-email', 'nobody.here@gmail.com'); await p2.click('#forgot-link'); await p2.waitForTimeout(800);
+  check(/no student account/i.test(await p2.textContent('#login-form .cf-status')), 'unknown email gets no reset email');
+  await p2.fill('#f-email', email); await p2.click('#forgot-link'); await p2.waitForTimeout(1000);
+  check(/reset link has been sent to qa\*+/i.test(await p2.textContent('#login-form .cf-status')), 'forgot password sends to the account email: ' + await p2.textContent('#login-form .cf-status'));
   const link = await lastFromLog(/(https?:\/\/\S+\/student-portal\/reset-password\?token=[A-Za-z0-9_-]+)/g);
   check(!!link && link.startsWith(BASE), 'reset link e-mailed: ' + (link || 'none'));
   await p2.goto(link, { waitUntil: 'networkidle' });

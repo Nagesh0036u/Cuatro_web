@@ -255,8 +255,11 @@ describe('student accounts', () => {
     const c = await newClient();
     const r = await c.post('/api/auth/student/forgot-password', { email: 'bob@test.local' });
     assert.equal(r.status, 200);
+    assert.match(r.json.message, /bo\*+@test\.local/);
+    assert.match(mailbox()[mailbox().length - 1].text, /reset-password\?token=/);
+    assert.equal((await c.post('/api/auth/student/forgot-password', { email: 'bob@test.local' })).status, 429); // one per minute
     const unknown = await c.post('/api/auth/student/forgot-password', { email: 'ghost@test.local' });
-    assert.equal(unknown.json.message, r.json.message); // no account enumeration
+    assert.equal(unknown.status, 404);
     // We cannot read the e-mailed token, so create one the way the route does.
     const sec = require('../server/security');
     const token = sec.randomToken(32);

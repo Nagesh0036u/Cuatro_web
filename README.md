@@ -108,10 +108,10 @@ E-mail is required for two student flows:
   disposable providers, or a domain with no mail server (DNS MX check) are refused and no code is sent.
   Otherwise a 6-digit code (10-minute expiry, 5 attempts, hashed at rest) is e-mailed. Only after the
   correct code is entered can the account be created, and only for that exact address.
-* **Forgot password.** A single-use reset link (30 minutes) is e-mailed. After resetting, the old password
+* **Forgot password.** On the login page the student types their email and clicks *Forgot password?*; a single-use reset link (30 minutes) is e-mailed to that account's address (unknown addresses get no email). After resetting, the old password
   stops working, all sessions are signed out, and the student logs in with the new password.
 
-Configure one mail service in `.env` (or in the Render dashboard):
+Configure one mail service: run `npm run setup-email` (asks for Gmail + App Password or a Brevo key, sends a test email, saves `.env`), or set it by hand in `.env` / the Render dashboard:
 
 * **Brevo HTTP API** (`BREVO_API_KEY`): works on Render free, which blocks SMTP ports. Create a free
   brevo.com account, verify your sender address, create an API key, and set `MAIL_FROM` to that sender.

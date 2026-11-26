@@ -7,6 +7,30 @@
 
   // ------------------------------------------------------------------ authentication pages
   CT.on('student-login', () => {
+    // "Forgot password?" e-mails the reset link to the address already typed in the login form.
+    const forgot = document.getElementById('forgot-link');
+    const loginForm = document.getElementById('login-form');
+    if (forgot && loginForm) {
+      forgot.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const emailInput = loginForm.elements.email;
+        const st = loginForm.querySelector('.cf-status');
+        const holder = loginForm.querySelector('[data-error-for="email"]');
+        CT.clearErrors(loginForm);
+        const addr = emailInput.value.trim();
+        if (!addr || !emailInput.checkValidity()) {
+          if (holder) holder.textContent = 'Type your account email here, then click "Forgot password?" again.';
+          emailInput.classList.add('is-invalid'); emailInput.focus();
+          return;
+        }
+        if (forgot.dataset.busy) return;
+        forgot.dataset.busy = '1'; forgot.textContent = 'Sending reset link...';
+        CT.api('POST', '/api/auth/student/forgot-password', { email: addr })
+          .then((res) => { st.textContent = res.message; st.className = 'cf-status ok'; })
+          .catch((err) => CT.showErrors(loginForm, err))
+          .then(() => { delete forgot.dataset.busy; forgot.textContent = 'Forgot password?'; });
+      });
+    }
     CT.bindForm(document.getElementById('login-form'),
       (v) => CT.api('POST', '/api/auth/student/login', { email: v.email, password: v.password }),
       (res) => { CT.setCsrf(res.csrfToken); location.href = CT.safeNext(P + '/dashboard'); });
