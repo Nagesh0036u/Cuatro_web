@@ -9,15 +9,15 @@
   const PAGE_W = 794;
 
   const TEMPLATES = [
-    { id: 'chronological', name: 'Classic Chronological', type: 'Chronological', accent: '#3a4a6b', desc: 'Work history in reverse order. Best with steady experience and no gaps.' },
-    { id: 'functional', name: 'Skills Focus', type: 'Functional', accent: '#FFAA17', desc: 'Leads with skills and expertise. Good for career changers and employment gaps.' },
-    { id: 'combination', name: 'Skills + Experience', type: 'Combination (Hybrid)', accent: '#FFAA17', desc: 'Highlights skills first, then a reverse-chronological work history.' },
-    { id: 'mini', name: 'Mini One-Pager', type: 'Mini', accent: '#232429', desc: 'A condensed version for networking events and quick sharing.' },
-    { id: 'targeted', name: 'Targeted Application', type: 'Targeted', accent: '#FFAA17', desc: 'Aimed at one job, with key qualifications matched to that role.' },
-    { id: 'modern', name: 'Modern Sidebar', type: 'Modern', accent: '#232429', desc: 'Two-column layout with a coloured sidebar for contact and skills.' },
-    { id: 'executive', name: 'Executive Serif', type: 'Formal', accent: '#1c2a4a', font: 'serif', desc: 'Traditional serif design for formal and senior roles.' },
-    { id: 'fresher', name: 'Fresher / Student', type: 'Education first', accent: '#FFAA17', desc: 'Puts education, projects and skills first. Ideal for graduates.' },
-    { id: 'creative', name: 'Creative Bold', type: 'Creative', accent: '#FFAA17', desc: 'Bold header and two columns for design, marketing and media roles.' },
+    { id: 'chronological', name: 'Classic Chronological', type: 'Chronological', accent: '#0A0F1E', desc: 'Work history in reverse order. Best with steady experience and no gaps.' },
+    { id: 'functional', name: 'Skills Focus', type: 'Functional', accent: '#E8743B', desc: 'Leads with skills and expertise. Good for career changers and employment gaps.' },
+    { id: 'combination', name: 'Skills + Experience', type: 'Combination (Hybrid)', accent: '#E8743B', desc: 'Highlights skills first, then a reverse-chronological work history.' },
+    { id: 'mini', name: 'Mini One-Pager', type: 'Mini', accent: '#0A0F1E', desc: 'A condensed version for networking events and quick sharing.' },
+    { id: 'targeted', name: 'Targeted Application', type: 'Targeted', accent: '#E8743B', desc: 'Aimed at one job, with key qualifications matched to that role.' },
+    { id: 'modern', name: 'Modern Sidebar', type: 'Modern', accent: '#0A0F1E', desc: 'Two-column layout with a coloured sidebar for contact and skills.' },
+    { id: 'executive', name: 'Executive Serif', type: 'Formal', accent: '#0A0F1E', font: 'serif', desc: 'Traditional serif design for formal and senior roles.' },
+    { id: 'fresher', name: 'Fresher / Student', type: 'Education first', accent: '#E8743B', desc: 'Puts education, projects and skills first. Ideal for graduates.' },
+    { id: 'creative', name: 'Creative Bold', type: 'Creative', accent: '#E8743B', desc: 'Bold header and two columns for design, marketing and media roles.' },
     { id: 'minimal', name: 'ATS Minimal', type: 'Plain / ATS-friendly', accent: '#111111', desc: 'Plain single column that applicant tracking systems read easily.' }
   ];
   const tplById = (id) => TEMPLATES.find((t) => t.id === id) || TEMPLATES[0];
@@ -39,17 +39,17 @@
     achievements: 'Winner, college hackathon 2024\nTop 5% in national coding contest',
     languages: 'English, Hindi, Kannada',
     target: { jobTitle: 'Junior Software Developer', company: 'Cuatro Tech Solutions', keyQualifications: 'Built and deployed web applications end to end\nStrong SQL and API integration skills\nComfortable working in agile teams' },
-    settings: { accent: '#FFAA17', font: 'sans' }
+    settings: { accent: '#E8743B', font: 'sans' }
   };
 
   // ------------------------------------------------------------------ colour helpers
   function rgb(hex) { const n = parseInt(String(hex).slice(1), 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; }
   function lum(c) { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b); }
   function cssVars(accent) {
-    const c = rgb(/^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#FFAA17');
+    const c = rgb(/^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#E8743B');
     const dark = `rgb(${Math.round(c.r * 0.55)},${Math.round(c.g * 0.55)},${Math.round(c.b * 0.55)})`;
     const tint = `rgb(${Math.round(c.r + (255 - c.r) * 0.88)},${Math.round(c.g + (255 - c.g) * 0.88)},${Math.round(c.b + (255 - c.b) * 0.88)})`;
-    return `--rs-accent:rgb(${c.r},${c.g},${c.b});--rs-accent-dark:${dark};--rs-tint:${tint};--rs-on-accent:${lum(c) > 0.4 ? '#1a1d24' : '#ffffff'}`;
+    return `--rs-accent:rgb(${c.r},${c.g},${c.b});--rs-accent-dark:${dark};--rs-tint:${tint};--rs-on-accent:${lum(c) > 0.18 ? '#0A0F1E' : '#ffffff'}`;
   }
 
   // ------------------------------------------------------------------ resume renderer (pure: data in, HTML out)

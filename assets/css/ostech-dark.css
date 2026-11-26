@@ -1,24 +1,24 @@
 :root {
-  --ostech-text: #686A6F;
-  --ostech-text-rgb: 104, 106, 111;
-  --ostech-text-dark: #222429;
-  --ostech-text-dark-rgb: 34, 36, 41;
-  --ostech-text-gray: #999B9F;
-  --ostech-text-gray-rgb: 153, 155, 159;
-  --ostech-white: #171717;
+  --ostech-text: #5A6783;
+  --ostech-text-rgb: 90, 103, 131;
+  --ostech-text-dark: #0A0F1E;
+  --ostech-text-dark-rgb: 10, 15, 30;
+  --ostech-text-gray: #8FA3C7;
+  --ostech-text-gray-rgb: 143, 163, 199;
+  --ostech-white: #060A15;
   --ostech-white-rgb: 20, 18, 21;
-  --ostech-base: #FFAA17;
-  --ostech-base-rgb: 255, 170, 23;
-  --ostech-secondary: #232429;
-  --ostech-secondary-rgb: 35, 36, 41;
+  --ostech-base: #E8743B;
+  --ostech-base-rgb: 232, 116, 59;
+  --ostech-secondary: #0A0F1E;
+  --ostech-secondary-rgb: 10, 15, 30;
   --ostech-black: #fff;
   --ostech-black-rgb: 255, 255, 255;
   --ostech-black3: #000;
   --ostech-black3-rgb: 0, 0, 0;
   --ostech-gray: #1c1a1d;
   --ostech-gray-rgb: 28, 26, 29;
-  --ostech-border-color: #DBDBDB;
-  --ostech-border-color-rgb: 219, 219, 219;
+  --ostech-border-color: #D5DCEB;
+  --ostech-border-color-rgb: 213, 220, 235;
 }
 
 .ostech-btn::before, .ostech-btn::after {

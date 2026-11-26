@@ -54,7 +54,7 @@ function sanitize(input) {
     achievements: text(d.achievements, 1500),
     languages: line(d.languages, 200),
     target: { jobTitle: line(t.jobTitle, 120), company: line(t.company, 120), keyQualifications: text(t.keyQualifications, 800) },
-    settings: { accent: color(s.accent, '#FFAA17'), font: FONTS.includes(s.font) ? s.font : 'sans' }
+    settings: { accent: color(s.accent, '#E8743B'), font: FONTS.includes(s.font) ? s.font : 'sans' }
   };
   if (JSON.stringify(out).length > 60000) return null;
   return out;
@@ -78,7 +78,7 @@ function defaultData(profile) {
     skills: [{ name: 'Skills', items: profile.skills || '' }],
     certifications: [], achievements: '', languages: '',
     target: { jobTitle: '', company: '', keyQualifications: '' },
-    settings: { accent: '#FFAA17', font: 'sans' }
+    settings: { accent: '#E8743B', font: 'sans' }
   });
 }
 

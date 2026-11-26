@@ -151,3 +151,13 @@ Students open **Student Portal > Resume Builder** (`/student-portal/resume-build
 * The editor shows how many A4 pages the resume will print on. Resumes with more content than one page continue on a second page.
 
 Run `node tests/e2e/resume-check.js` (server running on a fresh database) for a browser check of all 10 templates, including a PDF text check.
+
+## Colour palette and rounded corners
+
+The site uses the Cuatro brand palette: **Navy** `#0A0F1E`, **Silver Blue** `#8FA3C7`, **Copper** `#E8743B` and **Champagne Ivory** `#F3EEE6`.
+The template's colour variables at the top of `assets/css/ostech.css` (`--ostech-base` = Copper, `--ostech-secondary` = Navy, `--ostech-gray` = Ivory,
+`--ostech-text-gray` = Silver Blue) drive nearly every colour, so a future palette change is a matter of editing those lines.
+Body text uses a darkened Silver Blue (`#5A6783`) so it stays readable on white and ivory. The orange graphics in `assets/images/shapes` and the logo were recoloured to Copper.
+
+All boxes, cards, images, buttons and form fields have rounded corners. The radius sizes are the `--cr-*` variables in `assets/css/cuatro.css`
+(`--cr-sm` 12px, `--cr-md` 18px, `--cr-xl` 40px for the page banner and footer edges). The printed resume stays square on purpose.

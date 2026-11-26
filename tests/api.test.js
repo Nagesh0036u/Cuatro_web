@@ -554,7 +554,7 @@ describe('resume builder', () => {
     assert.equal(saved.title, 'Alice Data Resume');
     assert.equal(saved.template, 'minimal');
     assert.ok(saved.data.summary.length <= 1200);
-    assert.equal(saved.data.settings.accent, '#FFAA17');
+    assert.equal(saved.data.settings.accent, '#E8743B');
     assert.equal(saved.data.settings.font, 'sans');
     assert.equal(saved.data.bogus, undefined);
     assert.equal(saved.data.experience[0].current, true);
