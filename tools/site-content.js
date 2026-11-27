@@ -13,6 +13,16 @@ const company = {
   phone2: '+91 8792098197',
   tel1: '+919902720247',
   tel2: '+918792098197',
+  // Floating "Chat with us" button: opens a WhatsApp chat with this number and the message pre-typed.
+  whatsappNumber: '919902720247',
+  whatsappMessage: 'Hello Cuatro Tech Solutions, I visited your website and would like to know more about your services.',
+  social: [
+    { id: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/cuatrotechsolutions' },
+    { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/company/cuatro-tech-solutions/' },
+    { id: 'whatsapp', label: 'WhatsApp group', url: 'https://chat.whatsapp.com/JQ7k3IvuaUM0M8aFCJ9oYo' },
+    { id: 'x', label: 'X (Twitter)', url: 'https://x.com/cuatro_tech' },
+    { id: 'threads', label: 'Threads', url: 'https://www.threads.com/@cuatrotechsolutions' }
+  ],
   intro: [
     'Cuatro Tech Solutions is a technology and business solutions company focused on helping organisations improve their operations and digital capabilities.',
     'We bring together people, technology, data and creative thinking to deliver practical solutions that support business growth.',

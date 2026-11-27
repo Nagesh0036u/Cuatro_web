@@ -1,5 +1,6 @@
 'use strict';
 const { jobSeekerBody } = require('./job-seeker-auth');
+const { socialLinks, whatsappFloat } = require('./social');
 
 /**
  * Generates the Cuatro Tech Solutions pages from the Ostech template structure.
@@ -211,6 +212,7 @@ ${services.map((s) => `                                    <li class="footer-wid
                 <div class="container">
                     <div class="main-footer__bottom__inner">
                         <p class="main-footer__copyright"> &copy; Copyright <span class="dynamic-year"></span> by ${company.name}. All rights reserved.</p>
+                        ${socialLinks(company)}
                     </div>
                 </div>
             </div>
@@ -226,8 +228,8 @@ ${services.map((s) => `                                    <li class="footer-wid
 `;
 }
 
-function tail(p, scripts) {
-  return `
+function tail(p, scripts, { whatsapp = true } = {}) {
+  return `${whatsapp ? whatsappFloat(company) : ''}
     <div class="mobile-nav__wrapper">
         <div class="mobile-nav__overlay mobile-nav__toggler"></div>
         <!-- /.mobile-nav__overlay -->
@@ -348,7 +350,7 @@ ${cursor ? `
     <div class="page-wrapper">
 ${header(p)}
 ${body}
-${footer(p)}${tail(p, scripts)}`;
+${footer(p)}${tail(p, scripts, { whatsapp: !file.startsWith('admin-portal/') })}`;
   const out = path.join(ROOT, file);
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, html);

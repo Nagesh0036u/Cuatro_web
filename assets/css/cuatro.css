@@ -433,3 +433,51 @@ img { border-radius: var(--cr-sm); }
 }
 
 .cx-form__row--end { justify-content: flex-end; }
+
+/* ===================== Footer social icons ===================== */
+.main-footer__bottom__inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px; text-align: left; }
+.cx-social { display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; }
+.cx-social__link {
+  display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%;
+  color: #F3EEE6; background: rgba(143, 163, 199, 0.08); border: 1px solid rgba(143, 163, 199, 0.22);
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+.cx-social__ico { width: 18px; height: 18px; display: block; }
+.cx-social__link:hover, .cx-social__link:focus-visible {
+  color: #0A0F1E; background: #E8743B; border-color: #E8743B; transform: translateY(-3px);
+  box-shadow: 0 10px 22px -10px rgba(232, 116, 59, 0.8);
+}
+.cx-social__link:focus-visible { outline: 2px solid #F3EEE6; outline-offset: 3px; }
+@media (max-width: 767px) {
+  .main-footer__bottom__inner { flex-direction: column; justify-content: center; text-align: center; padding-left: 34px; padding-right: 34px; }
+}
+
+/* ===================== Floating WhatsApp button ===================== */
+.cx-wa {
+  position: fixed; right: 72px; bottom: 26px; z-index: 98;
+  display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px 12px 14px; border-radius: 999px;
+  background: #25D366; color: #0A0F1E; font-weight: 700; font-size: 16px; line-height: 1; text-decoration: none;
+  box-shadow: 0 14px 30px -10px rgba(37, 211, 102, 0.65), 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease-out, box-shadow 0.3s ease, background-color 0.3s ease;
+  animation: cxWaIn 0.6s ease 1s backwards; /* "backwards" so the JS lift (inline transform) is not overridden */
+}
+.cx-wa:hover, .cx-wa:focus-visible { color: #0A0F1E; background: #2fe073; box-shadow: 0 18px 36px -10px rgba(37, 211, 102, 0.8), 0 6px 14px rgba(0, 0, 0, 0.3); }
+.cx-wa:focus-visible { outline: 2px solid #F3EEE6; outline-offset: 3px; }
+.cx-wa__icon { position: relative; display: grid; place-items: center; width: 30px; height: 30px; }
+.cx-wa__icon::after { /* soft pulse ring */
+  content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(10, 15, 30, 0.35);
+  animation: cxWaPulse 2.4s ease-out infinite;
+}
+.cx-wa__ico { width: 26px; height: 26px; display: block; }
+@keyframes cxWaIn { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: none; } }
+@keyframes cxWaPulse { 0% { transform: scale(0.8); opacity: 0.9; } 70%, 100% { transform: scale(1.35); opacity: 0; } }
+@media (max-width: 575px) {
+  .cx-wa { right: 62px; bottom: 18px; padding: 0; width: 56px; height: 56px; justify-content: center; }
+  .cx-wa__text { display: none; }
+  .cx-wa__ico { width: 28px; height: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { .cx-wa, .cx-wa__icon::after { animation: none; } }
+@media print { .cx-wa { display: none !important; } }
+/* decorative footer images must never block clicks on footer links / social icons */
+.main-footer__shape, .main-footer__earth { pointer-events: none; }
+.main-footer__bottom { position: relative; z-index: 2; }

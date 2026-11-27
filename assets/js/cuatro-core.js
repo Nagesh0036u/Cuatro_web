@@ -167,7 +167,23 @@
       .then(function () { location.href = '/' + area + '-portal/login'; });
   });
 
+  /* Floating WhatsApp button: rise above the footer bar so it never covers the social icons. */
+  function liftWhatsapp() {
+    var wa = document.querySelector('.cx-wa');
+    var bar = document.querySelector('.main-footer__bottom');
+    if (!wa || !bar) return;
+    var update = function () {
+      var r = bar.getBoundingClientRect();
+      var overlap = window.innerHeight - r.top; // how much of the footer bar is on screen
+      wa.style.transform = overlap > 0 ? 'translateY(' + (-Math.min(overlap, r.height) - 4) + 'px)' : '';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    liftWhatsapp();
     var name = document.body.getAttribute('data-page');
     if (name && pages[name]) pages[name]();
   });
